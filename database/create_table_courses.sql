@@ -1,4 +1,7 @@
-Unstaged changes after reset:
-M	README.md
-D	create_database.sql
-M	database/create_table_courses.sql
+USE repl_reviews;
+CREATE TABLE `courses` (
+	`id` VARCHAR(6),
+	`title` VARCHAR(100),
+	`required` BIT,
+	PRIMARY KEY (`id`)
+);
