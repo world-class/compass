@@ -1,6 +1,6 @@
 # repl-reviews
 
-## Installation
+## Developer Installation
 
 1.  Navigate to the repository locally and install the following node modules.
 
