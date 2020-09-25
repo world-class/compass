@@ -6,7 +6,7 @@
 
         $ npm install express ejs mysql
 
-2.  Run the SQL commands in the `create_database.sql` file.
+2.  Run the SQL commands in the `database` directory to build the database.
 3.  Insert your mysql password into the `index.js` file in this section:
 
         const db = mysql.createConnection({
