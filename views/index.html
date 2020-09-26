@@ -14,7 +14,7 @@
 			crossorigin="anonymous"
 		/>
 
-		<title>REPL Reviews</title>
+		<title><%- title %></title>
 	</head>
 	<body>
 		<!-- Express snippet to include the header and navigation from a partial -->
@@ -28,28 +28,22 @@
 						<th scope="col" data-sortable="true">ID</th>
 						<th scope="col" data-sortable="true">Course</th>
 						<th scope="col" data-sortable="true">Reviews</th>
-						<th scope="col" data-sortable="true">Difficulty</th>
-						<th scope="col" data-sortable="true">Workload</th>
-						<th scope="col" data-sortable="true">Rating</th>
+						<th scope="col" data-sortable="true">Difficulty (1-5)</th>
+						<th scope="col" data-sortable="true">Workload (hrs/wk)</th>
+						<th scope="col" data-sortable="true">Rating (1-5)</th>
 					</tr>
 				</thead>
 				<tbody>
+				<% courseReviewData.forEach(function(course){ %>
 					<tr>
-						<td>CM1015</td>
-						<td>Computational Mathematics</td>
-						<td>122</td>
-						<td>3.2</td>
-						<td>4.3</td>
-						<td>1.1</td>
+						<td><%= course.id %></td>
+						<td><%= course.title %></td>
+						<td><%= course.reviewCount %></td>
+						<td><%= course.difficulty %></td>
+						<td><%= course.workload %></td>
+						<td><%= course.rating %></td>
 					</tr>
-					<tr>
-						<td>CM1005</td>
-						<td>Introduction to Programming</td>
-						<td>122</td>
-						<td>5.2</td>
-						<td>6.3</td>
-						<td>7.1</td>
-					</tr>
+				<% }) %>
 				</tbody>
 			</table>
 		</div>
