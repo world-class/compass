@@ -1,8 +1,25 @@
 module.exports = function (app) {
 	app.get("/", function (req, res) {
-		res.render("index.html", {
-			title: "REPL Reviews – Courses",
-			heading: "Courses",
+		let sqlquery = "SELECT courses.id, courses.title, \
+						COUNT(courses.id) AS reviewCount, \
+						AVG(reviews.difficulty) AS difficulty, \
+						AVG(reviews.workload) AS workload, \
+						AVG(reviews.rating) AS rating \
+						FROM courses \
+						JOIN reviews \
+						ON courses.id=reviews.course_id \
+						GROUP BY courses.id \
+						ORDER BY courses.id ASC";
+		db.query(sqlquery, (err, result) => {
+			if (err) {
+				return console.error("Data not found: "+ err.message);
+			}
+			console.log(result)
+			res.render("index.html", {
+				title: "REPL Reviews – Courses",
+				heading: "Courses",
+				courseReviewData: result
+			});
 		});
 	});
 
