@@ -1,5 +1,7 @@
 USE repl_reviews;
 
+CREATE DATABASE IF NOT EXISTS repl_reviews;
+
 DROP TABLE IF EXISTS reviews;
 
 DROP TABLE IF EXISTS courses;
