@@ -22,7 +22,9 @@
 		<div class="container">
 			<!-- Page content begins below this -->
 			<h1><%- heading %></h1>
-			<table data-toggle="table" data-search="true">
+
+			<a href="/add" class="btn btn-primary">Add a review</a>
+			<table data-toggle="table" data-search="true" class="pb-10">
 				<thead>
 					<tr>
 						<th scope="col" data-sortable="true">ID</th>
@@ -34,7 +36,7 @@
 					</tr>
 				</thead>
 				<tbody>
-				<% courseReviewData.forEach(function(course){ %>
+					<% courseReviewData.forEach(function(course){ %>
 					<tr>
 						<td><%= course.id %></td>
 						<td><%= course.title %></td>
@@ -43,7 +45,7 @@
 						<td><%= course.workload %></td>
 						<td><%= course.rating %></td>
 					</tr>
-				<% }) %>
+					<% }) %>
 				</tbody>
 			</table>
 		</div>

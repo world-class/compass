@@ -1,6 +1,7 @@
 module.exports = function (app) {
 	app.get("/", function (req, res) {
-		let sqlquery = "SELECT courses.id, courses.title, \
+		let sqlquery =
+			"SELECT courses.id, courses.title, \
 						COUNT(courses.id) AS reviewCount, \
 						AVG(reviews.difficulty) AS difficulty, \
 						AVG(reviews.workload) AS workload, \
@@ -12,54 +13,42 @@ module.exports = function (app) {
 						ORDER BY courses.id ASC";
 		db.query(sqlquery, (err, result) => {
 			if (err) {
-				return console.error("Data not found: "+ err.message);
+				return console.error("Data not found: " + err.message);
 			}
-			console.log(result)
+			console.log(result);
 			res.render("index.html", {
 				title: "REPL Reviews – Courses",
 				heading: "Courses",
-				courseReviewData: result
+				courseReviewData: result,
 			});
 		});
 	});
 
 	app.get("/add", function (req, res) {
-		res.render("addreview.html", {
-			title: "REPL Reviews – Courses",
-			heading: "Add review",
+		let sql = "SELECT id, title FROM courses";
+		db.query(sql, (err, result) => {
+			if (err) {
+				return console.error("Data not found: " + err.message);
+			}
+			res.render("addreview.html", {
+				title: "REPL Reviews – Add Review",
+				heading: "Add Review",
+				courseList: result,
+				addResult: req.query.addResult,
+			});
 		});
 	});
 
 	app.post("/added", function (req, res) {
 		// saving data in database
 		let sqlquery = "INSERT INTO reviews (course_id, difficulty, workload, rating) VALUES (?,?,?,?)"; // execute sql query
-		let newrecord = [req.body.module, req.body.difficulty, req.body.workload, req.body.rating];
+		let newrecord = [req.body.course_id, req.body.difficulty, req.body.workload, req.body.rating];
 		db.query(sqlquery, newrecord, (err, result) => {
 			if (err) {
-				res.render("add.html", {
-					title: "CalorieBuddy - Add Food Item",
-					heading: "Add Food Item",
-					success: "",
-					failure: "Food item couldn't be added. You may have submitted invalid values. Try again.",
-					food: req.body.name,
-					availableFoods: [{}],
-					lead: "Add food items to CalorieBuddy.",
-					action: "added",
-					mode: "",
-				});
+				res.send("The review couldn't be added. Try again.");
+				console.log(req.body);
 				return console.error(err.message);
-			} else
-				res.render("add.html", {
-					title: "CalorieBuddy - Add Food Item",
-					heading: "Add Food Item",
-					success: "Item added.",
-					failure: "",
-					food: req.body.name,
-					availableFoods: [{}],
-					lead: "Add food items to CalorieBuddy.",
-					action: "added",
-					mode: "",
-				});
+			} else res.redirect("../add/?addResult=success");
 		});
 	});
 };

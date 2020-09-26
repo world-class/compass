@@ -19,41 +19,44 @@
 		<title>REPL Reviews</title>
 	</head>
 	<body>
+		<!-- Express snippet to include the header and navigation from a partial -->
+		<%- include('partials/header.ejs') %>
 		<div class="container">
-			<!-- Express snippet to include the header and navigation from a partial -->
-			<%- include('partials/header.ejs') %>
-			<!-- Page content begins below this -->
+			<!-- Page content begins below-->
 			<h1><%- heading %></h1>
-
 			<!-- Form for capturing reviews -->
-			<form>
+			<% console.log(addResult); if (addResult == "success") { %>
+			<div class="alert alert-success" role="alert">Your review was successfully added. Thanks!</div>
+			<% } %>
+			<form action="/added" method="POST" class="mb-4">
 				<div class="form-group">
 					<label for="module">Module</label>
-					<select class="form-control selectpicker" data-live-search="true" id="module" title="Choose a module...">
-						<option value="CM1015">CM1015 - Computational Mathematics</option>
-						<option value="CM1005">CM1005 - Introduction to Programming I</option>
+					<select class="form-control selectpicker" data-live-search="true" id="course_id" name="course_id" title="Choose a module...">
+						<% courseList.forEach(function(course){ %>
+						<option value="<%= course.id %>"><%= course.id %> - <%= course.title %></option>
+						<% }) %>
 					</select>
 				</div>
 				<div class="form-group">
 					<label for="difficulty">How difficult was this module?</label>
-					<select class="form-control" id="difficulty">
+					<select class="form-control" id="difficulty" name="difficulty">
 						<option value="" selected disabled hidden>Choose a value...</option>
-						<option value="1">1 - Trivial</option>
-						<option value="2">2 - Easy</option>
-						<option value="3">3 - Moderate</option>
-						<option value="4">4 - Challenging</option>
-						<option value="5">5 - Hard</option>
+						<option name="difficulty" value="1">1 - Trivial</option>
+						<option name="difficulty" value="2">2 - Easy</option>
+						<option name="difficulty" value="3">3 - Moderate</option>
+						<option name="difficulty" value="4">4 - Challenging</option>
+						<option name="difficulty" value="5">5 - Hard</option>
 					</select>
 				</div>
 
 				<div class="form-group">
 					<label for="workload">How many hours per week did you work?</label>
-					<input class="form-control" type="number" id="workload"/>
+					<input class="form-control" type="number" id="workload" name="workload" min="0" max="168" />
 				</div>
 
 				<div class="form-group">
 					<label for="rating">How would you rate the quality of this module?</label>
-					<select class="form-control" id="rating">
+					<select class="form-control" id="rating" name="rating">
 						<option value="" selected disabled hidden>Choose a value...</option>
 						<option value="1">1 - Very Poor</option>
 						<option value="2">2 - Poor</option>

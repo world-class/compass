@@ -11,19 +11,19 @@ const db = mysql.createConnection({
 	user: "root",
 	password: "root",
 	database: "repl_reviews",
-	typeCast: function castField( field, useDefaultTypeCasting ) {
+	typeCast: function castField(field, useDefaultTypeCasting) {
 		// Cast bit fields that have a single-bit in them to a boolean
 		// Without this, 'bit' fields will not return as true/false
-		if ( ( field.type === "BIT" ) && ( field.length === 1 ) ) {
+		if (field.type === "BIT" && field.length === 1) {
 			var bytes = field.buffer();
 
 			// A Buffer in Node represents a collection of 8-bit unsigned integers.
 			// Therefore, our single "bit field" comes back as the bits '0000 0001',
 			// which is equivalent to the number 1.
-			return( bytes[ 0 ] === 1 );
+			return bytes[0] === 1;
 		}
-		return( useDefaultTypeCasting() );
-	}
+		return useDefaultTypeCasting();
+	},
 });
 
 // connect to database
