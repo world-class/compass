@@ -2,11 +2,11 @@
 
 ## Developer Installation
 
-1.  Navigate to the repository locally and install the following node modules.
+1.  Navigate to the repository locally and install the required node modules.
 
-        $ npm install express ejs mysql
+        $ npm install
 
-2.  Run the SQL commands in the `database` directory to build the database.
+2.  Run the `db_setup` script in the `db` folder to build the database.
 3.  Insert your mysql password into the `index.js` file in this section:
 
         const db = mysql.createConnection({
