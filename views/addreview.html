@@ -31,7 +31,14 @@
 			<form action="/added" method="POST" class="mb-4">
 				<div class="form-group">
 					<label for="module">Module</label>
-					<select class="form-control selectpicker" data-live-search="true" id="course_id" name="course_id" title="Choose a module...">
+					<select
+						class="form-control selectpicker"
+						data-live-search="true"
+						id="course_id"
+						name="course_id"
+						title="Choose a module..."
+						required
+					>
 						<% courseList.forEach(function(course){ %>
 						<option value="<%= course.id %>"><%= course.id %> - <%= course.title %></option>
 						<% }) %>
@@ -39,7 +46,7 @@
 				</div>
 				<div class="form-group">
 					<label for="difficulty">How difficult was this module?</label>
-					<select class="form-control" id="difficulty" name="difficulty">
+					<select class="form-control" id="difficulty" name="difficulty" required>
 						<option value="" selected disabled hidden>Choose a value...</option>
 						<option name="difficulty" value="1">1 - Trivial</option>
 						<option name="difficulty" value="2">2 - Easy</option>
@@ -51,12 +58,12 @@
 
 				<div class="form-group">
 					<label for="workload">How many hours per week did you work?</label>
-					<input class="form-control" type="number" id="workload" name="workload" min="0" max="168" />
+					<input class="form-control" type="number" id="workload" name="workload" min="0" max="168" required />
 				</div>
 
 				<div class="form-group">
 					<label for="rating">How would you rate the quality of this module?</label>
-					<select class="form-control" id="rating" name="rating">
+					<select class="form-control" id="rating" name="rating" required>
 						<option value="" selected disabled hidden>Choose a value...</option>
 						<option value="1">1 - Very Poor</option>
 						<option value="2">2 - Poor</option>
@@ -68,7 +75,7 @@
 
 				<div class="form-group">
 					<label for="exampleFormControlTextarea1">Your Review</label>
-					<textarea class="form-control" id="exampleFormControlTextarea1" rows="4"></textarea>
+					<textarea class="form-control" id="exampleFormControlTextarea1" rows="4" required></textarea>
 				</div>
 				<input class="btn btn-primary" type="submit" value="Submit" />
 			</form>
