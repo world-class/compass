@@ -1,6 +1,6 @@
-USE repl_reviews;
-
 CREATE DATABASE IF NOT EXISTS repl_reviews;
+
+USE repl_reviews;
 
 DROP TABLE IF EXISTS reviews;
 
