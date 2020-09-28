@@ -15,7 +15,6 @@ module.exports = function (app) {
 			if (err) {
 				return console.error("Data not found: " + err.message);
 			}
-			console.log(result);
 			res.render("index.html", {
 				title: "REPL Reviews – Courses",
 				heading: "Courses",
@@ -46,7 +45,6 @@ module.exports = function (app) {
 		db.query(sqlquery, newrecord, (err, result) => {
 			if (err) {
 				res.send("The review couldn't be added. Try again.");
-				console.log(req.body);
 				return console.error(err.message);
 			} else res.redirect("../add/?addResult=success");
 		});
