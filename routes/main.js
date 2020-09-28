@@ -3,9 +3,9 @@ module.exports = function (app) {
 		let sqlquery =
 			"SELECT courses.id, courses.title, \
 						COUNT(courses.id) AS reviewCount, \
-						AVG(reviews.difficulty) AS difficulty, \
-						AVG(reviews.workload) AS workload, \
-						AVG(reviews.rating) AS rating \
+						ROUND(AVG(reviews.difficulty), 2) AS difficulty, \
+						ROUND(AVG(reviews.workload), 2) AS workload, \
+						ROUND(AVG(reviews.rating), 2) AS rating \
 						FROM courses \
 						JOIN reviews \
 						ON courses.id=reviews.course_id \
@@ -40,8 +40,16 @@ module.exports = function (app) {
 
 	app.post("/added", function (req, res) {
 		// saving data in database
-		let sqlquery = "INSERT INTO reviews (course_id, difficulty, workload, rating) VALUES (?,?,?,?)"; // execute sql query
-		let newrecord = [req.body.course_id, req.body.difficulty, req.body.workload, req.body.rating];
+		let sqlquery = "INSERT INTO reviews (course_id, session, difficulty, workload, rating, text) VALUES (?,?,?,?,?,?)"; // execute sql query
+		let newrecord = [
+			req.body.course_id, 
+			req.body.session, 
+			req.body.difficulty, 
+			req.body.workload, 
+			req.body.rating, 
+			req.body.text
+		];
+		console.log(req.body.text);
 		db.query(sqlquery, newrecord, (err, result) => {
 			if (err) {
 				res.send("The review couldn't be added. Try again.");
@@ -49,4 +57,28 @@ module.exports = function (app) {
 			} else res.redirect("../add/?addResult=success");
 		});
 	});
+
+	app.get("/reviews",function(req, res) {
+		let sqlquery = "SELECT reviews.course_id, \
+						reviews.timestamp, \
+						courses.title, \
+						reviews.session, \
+						reviews.difficulty, \
+						reviews.workload, \
+						reviews.rating, \
+						reviews.text FROM reviews \
+						JOIN courses \
+						ON reviews.course_id=courses.id";
+		db.query(sqlquery, (err, result) => {
+			if (err) {
+				return console.error("Data not found: " + err.message);
+			}
+			console.log(result)
+			res.render("reviews.html", {
+				title: "REPL Reviews – All Reviews",
+				heading: "Reviews",
+				reviews: result
+			});
+		});
+    });
 };
