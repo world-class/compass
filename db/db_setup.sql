@@ -15,10 +15,13 @@ CREATE TABLE `courses` (
 
 CREATE TABLE `reviews` (
 	`id` SMALLINT NOT NULL AUTO_INCREMENT,
+	`timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	`course_id` VARCHAR(6) NOT NULL,
+	`session` VARCHAR(30),
 	`difficulty` TINYINT NOT NULL,
 	`workload` TINYINT,
 	`rating` TINYINT,
+	`text` VARCHAR(5000),
 	PRIMARY KEY (`id`),
 	FOREIGN KEY (course_id) REFERENCES courses(id)
 );
