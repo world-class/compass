@@ -16,7 +16,7 @@
 		<!-- Latest compiled and minified CSS -->
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css" />
 
-		<title>REPL Reviews</title>
+		<title><%- title %></title>
 	</head>
 	<body>
 		<!-- Express snippet to include the header and navigation from a partial -->
@@ -42,6 +42,21 @@
 						<% courseList.forEach(function(course){ %>
 						<option value="<%= course.id %>"><%= course.id %> - <%= course.title %></option>
 						<% }) %>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="session">Session</label>
+					<select
+						class="form-control selectpicker"
+						data-live-search="true"
+						id="session"
+						name="session"
+						title="Choose a session..."
+						required
+					>
+						<option value="April to September 2019">April to September 2019</option>
+						<option value="October to March 2020">October to March 2020</option>
+						<option value="April to September 2020">April to September 2020</option>
 					</select>
 				</div>
 				<div class="form-group">
@@ -74,8 +89,8 @@
 				</div>
 
 				<div class="form-group">
-					<label for="exampleFormControlTextarea1">Your Review</label>
-					<textarea class="form-control" id="exampleFormControlTextarea1" rows="4" required></textarea>
+					<label for="text">Your Review</label>
+					<textarea class="form-control" id="text" name="text" rows="4" required></textarea>
 				</div>
 				<input class="btn btn-primary" type="submit" value="Submit" />
 			</form>
