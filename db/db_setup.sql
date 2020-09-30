@@ -21,7 +21,7 @@ CREATE TABLE `reviews` (
 	`difficulty` TINYINT NOT NULL,
 	`workload` TINYINT,
 	`rating` TINYINT,
-	`text` VARCHAR(5000),
+	`text` TEXT,
 	PRIMARY KEY (`id`),
 	FOREIGN KEY (course_id) REFERENCES courses(id)
 );
