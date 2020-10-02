@@ -48,7 +48,14 @@ module.exports = function(app) {
 	app.post("/added", function(req, res) {
 		// saving data in database
 		let sqlquery = "INSERT INTO reviews (course_id, session, difficulty, workload, rating, text) VALUES (?,?,?,?,?,?)"; // execute sql query
-		let newrecord = [req.body.course_id, req.body.session, req.body.difficulty, req.body.workload, req.body.rating, req.body.text];
+		let newrecord = [
+			req.body.course_id, 
+			req.body.session, 
+			req.body.difficulty, 
+			req.body.workload, 
+			req.body.rating, 
+			req.body.text
+		];
 		db.query(sqlquery, newrecord, (err, result) => {
 			if (err) {
 				res.send("The review couldn't be added. Try again.");
