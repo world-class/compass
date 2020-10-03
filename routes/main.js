@@ -49,7 +49,6 @@ module.exports = function (app) {
 			req.body.rating, 
 			req.body.text
 		];
-		console.log(req.body.text);
 		db.query(sqlquery, newrecord, (err, result) => {
 			if (err) {
 				res.send("The review couldn't be added. Try again.");
@@ -68,12 +67,12 @@ module.exports = function (app) {
 						reviews.rating, \
 						reviews.text FROM reviews \
 						JOIN courses \
-						ON reviews.course_id=courses.id";
+						ON reviews.course_id=courses.id \
+						ORDER BY reviews.timestamp DESC";
 		db.query(sqlquery, (err, result) => {
 			if (err) {
 				return console.error("Data not found: " + err.message);
 			}
-			console.log(result)
 			res.render("reviews.html", {
 				title: "REPL Reviews – All Reviews",
 				heading: "Reviews",
