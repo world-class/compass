@@ -1,5 +1,7 @@
 module.exports = function(app) {
+	// List all courses and their scores
 	app.get("/", function(req, res) {
+		// Get a list of all courses and calculate the average scores to show
 		let sqlquery =
 			"SELECT courses.id, courses.title, \
 						COUNT(courses.id) AS reviewCount, \
@@ -11,6 +13,8 @@ module.exports = function(app) {
 						ON courses.id=reviews.course_id \
 						GROUP BY courses.id \
 						ORDER BY courses.id ASC";
+
+		// Run the query and return the result
 		db.query(sqlquery, (err, result) => {
 			if (err) {
 				return console.error("Data not found: " + err.message);
@@ -23,7 +27,9 @@ module.exports = function(app) {
 		});
 	});
 
+	// Display a form to add a review
 	app.get("/add", function(req, res) {
+		// Get a list of all courses to populate the module selection UI
 		let sql = "SELECT id, title FROM courses";
 		db.query(sql, (err, result) => {
 			if (err) {
@@ -38,6 +44,7 @@ module.exports = function(app) {
 		});
 	});
 
+	// Add a review to the database and report success or failure
 	app.post("/added", function(req, res) {
 		// saving data in database
 		let sqlquery = "INSERT INTO reviews (course_id, session, difficulty, workload, rating, text) VALUES (?,?,?,?,?,?)"; // execute sql query
@@ -50,7 +57,17 @@ module.exports = function(app) {
 		});
 	});
 
+	// List all reviews, optionally filtered by course_id
 	app.get("/reviews", function(req, res) {
+	
+		/*
+		 * If a GET parameter for a selected module is sent, insert a WHERE clause
+		 * The typical parameter format is CMXXXX, e.g. CM1005
+		 * This filters the returned reviews by module
+		 * The "LIKE" comparison allows for fuzzy matching, e.g. CM10 returns all L4 modules
+		*/
+
+		// Get all reviews. JOIN to courses table is required to get the course titles
 		let sqlquery =
 			"SELECT reviews.course_id, \
 						reviews.timestamp, \
@@ -63,11 +80,15 @@ module.exports = function(app) {
 						JOIN courses \
 						ON reviews.course_id=courses.id ";
 
+		// Insert a WHERE clause if a course ID has been provided
 		if (req.query.course_id !== undefined) {
 			sqlquery += " WHERE reviews.course_id LIKE '%" + req.query.course_id + "%'";
 		}
-		
+
+		// Complete the SQL query
 		sqlquery += " ORDER BY reviews.timestamp DESC";
+
+		// Run the final query and return reviews for display
 		db.query(sqlquery, (err, result) => {
 			if (err) {
 				return console.error("Data not found: " + err.message);
