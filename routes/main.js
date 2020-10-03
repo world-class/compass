@@ -47,7 +47,13 @@ module.exports = function(app) {
 	// Add a review to the database and report success or failure
 	app.post("/added", function(req, res) {
 		// saving data in database
-		let sqlquery = "INSERT INTO reviews (course_id, session, difficulty, workload, rating, text) VALUES (?,?,?,?,?,?)"; // execute sql query
+		let sqlquery = "INSERT INTO reviews (course_id, \
+											session, \
+											difficulty, \
+											workload, \
+											rating, \
+											text) \
+						VALUES (?,?,?,?,?,?)"; // build sql query
 		let newrecord = [
 			req.body.course_id, 
 			req.body.session, 
