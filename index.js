@@ -8,10 +8,10 @@ require('dotenv').config();
 app.use(express.static(path.join(__dirname, "/public")));
 
 const db = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "root",
-	database: "repl_reviews",
+	host: process.env.DB_HOST,
+	user: process.env.DB_USER,
+	password: process.env.DB_PASSWORD,
+	database: process.env.DB_DATABASE,
 	typeCast: function castField(field, useDefaultTypeCasting) {
 		// Cast bit fields that have a single-bit in them to a boolean
 		// Without this, 'bit' fields will not return as true/false
