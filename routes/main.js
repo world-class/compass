@@ -1,5 +1,5 @@
-module.exports = function (app) {
-	app.get("/", function (req, res) {
+module.exports = function(app) {
+	app.get("/", function(req, res) {
 		let sqlquery =
 			"SELECT courses.id, courses.title, \
 						COUNT(courses.id) AS reviewCount, \
@@ -18,12 +18,12 @@ module.exports = function (app) {
 			res.render("index.html", {
 				title: "REPL Reviews – Courses",
 				heading: "Courses",
-				courseReviewData: result,
+				courseReviewData: result
 			});
 		});
 	});
 
-	app.get("/add", function (req, res) {
+	app.get("/add", function(req, res) {
 		let sql = "SELECT id, title FROM courses";
 		db.query(sql, (err, result) => {
 			if (err) {
@@ -33,22 +33,15 @@ module.exports = function (app) {
 				title: "REPL Reviews – Add Review",
 				heading: "Add Review",
 				courseList: result,
-				addResult: req.query.addResult,
+				addResult: req.query.addResult
 			});
 		});
 	});
 
-	app.post("/added", function (req, res) {
+	app.post("/added", function(req, res) {
 		// saving data in database
 		let sqlquery = "INSERT INTO reviews (course_id, session, difficulty, workload, rating, text) VALUES (?,?,?,?,?,?)"; // execute sql query
-		let newrecord = [
-			req.body.course_id, 
-			req.body.session, 
-			req.body.difficulty, 
-			req.body.workload, 
-			req.body.rating, 
-			req.body.text
-		];
+		let newrecord = [req.body.course_id, req.body.session, req.body.difficulty, req.body.workload, req.body.rating, req.body.text];
 		db.query(sqlquery, newrecord, (err, result) => {
 			if (err) {
 				res.send("The review couldn't be added. Try again.");
@@ -57,8 +50,9 @@ module.exports = function (app) {
 		});
 	});
 
-	app.get("/reviews",function(req, res) {
-		let sqlquery = "SELECT reviews.course_id, \
+	app.get("/reviews", function(req, res) {
+		let sqlquery =
+			"SELECT reviews.course_id, \
 						reviews.timestamp, \
 						courses.title, \
 						reviews.session, \
@@ -67,8 +61,13 @@ module.exports = function (app) {
 						reviews.rating, \
 						reviews.text FROM reviews \
 						JOIN courses \
-						ON reviews.course_id=courses.id \
-						ORDER BY reviews.timestamp DESC";
+						ON reviews.course_id=courses.id ";
+
+		if (req.query.course_id !== undefined) {
+			sqlquery += " WHERE reviews.course_id LIKE '%" + req.query.course_id + "%'";
+		}
+		
+		sqlquery += " ORDER BY reviews.timestamp DESC";
 		db.query(sqlquery, (err, result) => {
 			if (err) {
 				return console.error("Data not found: " + err.message);
@@ -79,5 +78,5 @@ module.exports = function (app) {
 				reviews: result
 			});
 		});
-    });
+	});
 };
