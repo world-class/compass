@@ -25,7 +25,7 @@
 					<% courseReviewData.forEach(function(course){ %>
 					<tr>
 						<td><%= course.id %></td>
-						<td><%= course.title %></td>
+						<td><a href="/reviews?course_id=<%= course.id %>"><%= course.title %></a></td>
 						<td><%= course.reviewCount %></td>
 						<td><%= course.difficulty %></td>
 						<td><%= course.workload %></td>
