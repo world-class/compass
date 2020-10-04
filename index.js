@@ -4,6 +4,10 @@ const mysql = require("mysql");
 const path = require("path");
 const app = express();
 const port = 8087;
+const session = require("express-session");
+const passport = require("passport");
+const flash = require("connect-flash");
+
 require('dotenv').config();
 app.use(express.static(path.join(__dirname, "/public")));
 
@@ -38,9 +42,24 @@ db.connect((err) => {
 
 global.db = db;
 
+// configure PassportJS for local authentication
+require("./config/auth")(passport);
+
 app.use(bodyParser.urlencoded({ extended: true }));
 
-require("./routes/main")(app);
+// create session store. Use memorystore for now and migrate to MySQL later.
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: false
+}));
+
+// Initialize passportjs
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
+
+require("./routes/main")(app, passport);
 
 app.set("views", __dirname + "/views");
 app.set("view engine", "ejs");
