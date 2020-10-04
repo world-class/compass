@@ -1,4 +1,4 @@
-module.exports = function(app) {
+module.exports = function(app, passport) {
 	// List all courses and their scores
 	app.get("/", function(req, res) {
 		// Get a list of all courses and calculate the average scores to show
@@ -22,13 +22,14 @@ module.exports = function(app) {
 			res.render("index.html", {
 				title: "REPL Reviews – Courses",
 				heading: "Courses",
-				courseReviewData: result
+				courseReviewData: result,
+                user: req.user
 			});
 		});
 	});
 
-	// Display a form to add a review
-	app.get("/add", function(req, res) {
+	// Display a form to add a review. Requires authentication.
+	app.get("/add", checkAuth, function(req, res) {
 		// Get a list of all courses to populate the module selection UI
 		let sql = "SELECT id, title FROM courses";
 		db.query(sql, (err, result) => {
@@ -39,13 +40,14 @@ module.exports = function(app) {
 				title: "REPL Reviews – Add Review",
 				heading: "Add Review",
 				courseList: result,
-				addResult: req.query.addResult
+				addResult: req.query.addResult,
+                user: req.user
 			});
 		});
 	});
 
-	// Add a review to the database and report success or failure
-	app.post("/added", function(req, res) {
+	// Add a review to the database and report success or failure. Requires authentication.
+	app.post("/added", checkAuth, function(req, res) {
 		// saving data in database
 		let sqlquery = "INSERT INTO reviews (course_id, session, difficulty, workload, rating, text) VALUES (?,?,?,?,?,?)"; // execute sql query
 		let newrecord = [req.body.course_id, req.body.session, req.body.difficulty, req.body.workload, req.body.rating, req.body.text];
@@ -59,7 +61,7 @@ module.exports = function(app) {
 
 	// List all reviews, optionally filtered by course_id
 	app.get("/reviews", function(req, res) {
-	
+
 		/*
 		 * If a GET parameter for a selected module is sent, insert a WHERE clause
 		 * The typical parameter format is CMXXXX, e.g. CM1005
@@ -96,8 +98,64 @@ module.exports = function(app) {
 			res.render("reviews.html", {
 				title: "REPL Reviews – All Reviews",
 				heading: "Reviews",
-				reviews: result
+				reviews: result,
+                user: req.user
 			});
 		});
 	});
+
+    app.get('/login', function(req, res) {
+        // render login page with flash messages, if any.
+        res.render('login.html', {
+            message: req.flash('loginMessage'),
+            heading: "Login",
+            title: "REPL Reviews - Login"
+        });
+    });
+
+    // authenticate login requests with `local.login` strategy specified in auth.js
+    app.post('/login', passport.authenticate('local.login', {
+            failureRedirect : '/login',
+            failureFlash : true
+        }),
+        function(req, res) {
+            // Set cookie age to 7 days
+            req.session.cookie.maxAge = 7 * 24 * 60 * 60 * 1000;
+            res.redirect('/');
+        }
+    );
+
+
+    app.get('/register', function(req, res) {
+        // render registration page with flash messages, if any.
+        res.render('register.html', {
+            message: req.flash('registrationMessage'),
+            heading: "Register",
+            title: "REPL Reviews - Register"
+        });
+    });
+
+    // authenticate registration requests with `local.register` strategy specified in auth.js
+    app.post('/register', passport.authenticate('local.register', {
+        successRedirect : '/',
+        failureRedirect : '/register',
+        failureFlash : true
+    }));
+
+    // logout user
+    app.get('/logout', function(req, res) {
+        req.logout();
+        res.redirect('/');
+    });
 };
+
+
+// middleware for blocking access to desired routes
+function checkAuth(req, res, next) {
+    if (req.isAuthenticated()) {
+        next();
+    } else {
+        req.flash('loginMessage', 'You have to login before you can access this page');
+        res.redirect('/login');
+    }
+}
