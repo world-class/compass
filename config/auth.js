@@ -1,4 +1,5 @@
 const LocalStrategy = require("passport-local").Strategy;
+const SlackStrategy = require("passport-slack").Strategy;
 const bcrypt = require("bcrypt");
 
 /* user in database is represented in following schema:
@@ -91,5 +92,30 @@ module.exports = function (passport) {
                         }
                     });
             })
+    );
+
+    passport.use('slack.login',
+        new SlackStrategy({
+            clientID: process.env.SLACK_CLIENT_ID,
+            clientSecret: process.env.SLACK_CLIENT_SECRET,
+            scope: ["identity.basic", "identity.team"],
+            passReqToCallback: true,
+        },
+        (req, accessToken, refreshToken, profile, done) => {
+            // check if user belongs to UoL team
+            if (profile.team.id != process.env.SLACK_TEAM) {
+                return done(null, false,
+                    req.flash('profileMessage', 'Please verify using UoL slack workspace'));
+            }
+            db.query("UPDATE users SET slackuid= ?, verified=? WHERE id= ?",
+                [profile.id, 1, req.user.id],
+                (err, result) => {
+                if (err) {
+                    done(null, false, req.flash('profileMessage', 'Could not verify profile or duplicate account'));
+                } else {
+                    done(null, profile, req.flash('profileMessage', 'Profile verified'));
+                }
+            });
+        })
     );
 }

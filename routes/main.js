@@ -29,7 +29,7 @@ module.exports = function(app, passport) {
 	});
 
 	// Display a form to add a review. Requires authentication.
-	app.get("/add", checkAuth, function(req, res) {
+	app.get("/add", checkAuth, checkVerification, function(req, res) {
 		// Get a list of all courses to populate the module selection UI
 		let sql = "SELECT id, title FROM courses";
 		db.query(sql, (err, result) => {
@@ -47,7 +47,7 @@ module.exports = function(app, passport) {
 	});
 
 	// Add a review to the database and report success or failure. Requires authentication.
-	app.post("/added", checkAuth, function(req, res) {
+	app.post("/added", checkAuth, checkVerification, function(req, res) {
 		// saving data in database
 		let sqlquery = "INSERT INTO reviews (course_id, \
 											session, \
@@ -184,6 +184,17 @@ module.exports = function(app, passport) {
             res.redirect('/profile');
         });
     });
+
+    // Intiate slack authentication process
+    app.get('/auth/slack', passport.authorize('slack.login'));
+
+    // OAuth callback url used by Slack
+    app.get('/auth/slack/callback',
+      passport.authorize('slack.login', {
+          failureRedirect: '/profile'
+      }),
+      (req, res) => res.redirect('/profile')
+    );
 };
 
 
@@ -196,3 +207,14 @@ function checkAuth(req, res, next) {
         res.redirect('/login');
     }
 }
+
+// middleware for requiring verified account on desired routes
+function checkVerification(req, res, next) {
+    if (req.user.verified) {
+        next();
+    } else {
+        req.flash('profileMessage', 'You must verify your account before you can access this page.');
+        res.redirect('/profile');
+    }
+}
+

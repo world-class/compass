@@ -33,5 +33,7 @@ CREATE TABLE `users` (
     `username` VARCHAR(30) NOT NULL,
     `email` VARCHAR(60) UNIQUE NOT NULL,
     `password` VARCHAR(60) NOT NULL,
+    `verified` BIT NOT NULL DEFAULT 0,
+    `slackuid` VARCHAR(25) UNIQUE,
     PRIMARY KEY (`id`)
 );
