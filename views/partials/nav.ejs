@@ -15,8 +15,10 @@
 		<div class="navbar-nav">
 			<a href="/" class="nav-link">Courses</a>
 			<a href="/reviews" class="nav-link">Reviews</a>
+		</div>
+        <div class="navbar-nav flex-row justify-content-between ml-auto">
             <% if (typeof user !== 'undefined' && user) { %>
-                <a href="/" class="nav-link">Hi, <%= user.username %></a>
+                <a href="#" class="nav-link disabled">Hi, <%= user.username %></a>
                 <a href="/logout" class="nav-link">Logout</a>
             <% } else { %>
             <a href="/login" class="nav-link">Login</a>
