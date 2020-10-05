@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include('partials/head.ejs'), {title: title}%>
+    <body>
+        <%- include('partials/nav.ejs') %>
+        <div class="container">
+            <h1><%- heading %></h1>
+
+            <% if (message.length > 0) { %>
+                <div class="alert alert-warning"><%= message %></div>
+            <% } %>
+
+            <form action="/profile" method="post" class="">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" name="email" value="<%= user.email %>" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="username">Display name</label>
+                    <input type="text" class="form-control" name="username" value="<%= user.username %>">
+                </div>
+                <input type="submit" class="btn btn-primary btn-lg" value="Update">
+            </form>
+        </div>
+    </body>
+</html>
+

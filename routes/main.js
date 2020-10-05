@@ -150,7 +150,7 @@ module.exports = function(app, passport) {
 
     // authenticate registration requests with `local.register` strategy specified in auth.js
     app.post('/register', passport.authenticate('local.register', {
-        successRedirect : '/',
+        successRedirect : '/profile',
         failureRedirect : '/register',
         failureFlash : true
     }));
@@ -159,6 +159,30 @@ module.exports = function(app, passport) {
     app.get('/logout', function(req, res) {
         req.logout();
         res.redirect('/');
+    });
+
+    // profile page of the user
+    app.get('/profile', checkAuth, function(req, res) {
+        res.render('profile.html', {
+            message: req.flash('profileMessage'),
+            heading: "Profile",
+            title: "REPL Reviews - profile",
+            user: req.user
+        });
+    });
+
+    // Update profile details
+    app.post('/profile', checkAuth, function(req, res) {
+        db.query("UPDATE users SET username= ? WHERE id= ?",
+            [req.body.username, req.user.id],
+            (err, result) => {
+            if (err) {
+                req.flash('profileMessage', 'Could not update profile');
+                res.redirect('/profile');
+            }
+            req.flash('profileMessage', 'Profile updated');
+            res.redirect('/profile');
+        });
     });
 };
 
