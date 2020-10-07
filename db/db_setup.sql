@@ -15,19 +15,6 @@ CREATE TABLE `courses` (
 	PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `reviews` (
-	`id` SMALLINT NOT NULL AUTO_INCREMENT,
-	`timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	`course_id` VARCHAR(6) NOT NULL,
-	`session` VARCHAR(30),
-	`difficulty` TINYINT NOT NULL,
-	`workload` TINYINT,
-	`rating` TINYINT,
-	`text` TEXT,
-	PRIMARY KEY (`id`),
-	FOREIGN KEY (course_id) REFERENCES courses(id)
-);
-
 CREATE TABLE `users` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `username` VARCHAR(30) NOT NULL,
@@ -36,4 +23,19 @@ CREATE TABLE `users` (
     `verified` BIT NOT NULL DEFAULT 0,
     `slackuid` VARCHAR(25) UNIQUE,
     PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `reviews` (
+	`id` INT NOT NULL AUTO_INCREMENT,
+	`timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	`user_id` INT,
+	`course_id` VARCHAR(6) NOT NULL,
+	`session` VARCHAR(30),
+	`difficulty` TINYINT NOT NULL,
+	`workload` TINYINT,
+	`rating` TINYINT,
+	`text` TEXT,
+	PRIMARY KEY (`id`),
+	FOREIGN KEY (course_id) REFERENCES courses(id),
+	FOREIGN KEY (user_id) REFERENCES users(id)
 );

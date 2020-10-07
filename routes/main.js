@@ -49,14 +49,16 @@ module.exports = function(app, passport) {
 	// Add a review to the database and report success or failure. Requires authentication.
 	app.post("/added", checkAuth, checkVerification, function(req, res) {
 		// saving data in database
-		let sqlquery = "INSERT INTO reviews (course_id, \
+		let sqlquery = "INSERT INTO reviews (user_id, \
+											course_id, \
 											session, \
 											difficulty, \
 											workload, \
 											rating, \
 											text) \
-						VALUES (?,?,?,?,?,?)"; // build sql query
+						VALUES (?,?,?,?,?,?,?)"; // build sql query
 		let newrecord = [
+			req.user.id,
 			req.body.course_id, 
 			req.body.session, 
 			req.body.difficulty, 
@@ -85,6 +87,7 @@ module.exports = function(app, passport) {
 		// Get all reviews. JOIN to courses table is required to get the course titles
 		let sqlquery =
 			"SELECT reviews.course_id, \
+						users.username AS author, \
 						reviews.timestamp, \
 						courses.title, \
 						reviews.session, \
@@ -93,7 +96,9 @@ module.exports = function(app, passport) {
 						reviews.rating, \
 						reviews.text FROM reviews \
 						JOIN courses \
-						ON reviews.course_id=courses.id ";
+						ON reviews.course_id=courses.id \
+						JOIN users \
+						ON reviews.user_id=users.id";
 
 		// Insert a WHERE clause if a course ID has been provided
 		if (req.query.course_id !== undefined) {
