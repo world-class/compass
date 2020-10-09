@@ -74,6 +74,41 @@ module.exports = function(app, passport) {
 		});
 	});
 
+	// Get single review by id
+	app.get("/review/:id", function(req, res) {
+
+		// Get review by id
+		let sqlquery = "SELECT reviews.id, \
+						reviews.course_id, \
+						users.username AS author, \
+						reviews.timestamp, \
+						courses.title, \
+						reviews.session, \
+						reviews.difficulty, \
+						reviews.workload, \
+						reviews.rating, \
+						reviews.text FROM reviews \
+						JOIN courses \
+						ON reviews.course_id=courses.id \
+						JOIN users \
+						ON reviews.user_id=users.id \
+						WHERE reviews.id \
+						LIKE ?";
+		let id = [req.params.id];
+
+		db.query(sqlquery, id, (err, result) => {
+			if (err) {
+				return console.error("Data not found: " + err.message);
+			}
+			res.render("reviews.html", {
+				title: "REPL Reviews – Review " + id[0],
+				heading: "Review #" + id[0],
+				reviews: result
+                // user: req.user
+			});
+		});
+	});
+
 	// List all reviews, optionally filtered by course_id
 	app.get("/reviews", function(req, res) {
 
@@ -85,8 +120,8 @@ module.exports = function(app, passport) {
 		*/
 
 		// Get all reviews. JOIN to courses table is required to get the course titles
-		let sqlquery =
-			"SELECT reviews.course_id, \
+		let sqlquery = "SELECT reviews.id, \
+						reviews.course_id, \
 						users.username AS author, \
 						reviews.timestamp, \
 						courses.title, \
