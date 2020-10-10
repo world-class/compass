@@ -53,7 +53,4 @@ SessionOptions.prototype.makeStr = function (sessionMonth, endYear) {
 		this.months[sessionMonth.end] + " " + endYear
 }
 
-//run everything dependent on jQuery in here
-window.onload = function() {
-	new SessionOptions("session")
-}
+export { SessionOptions };
