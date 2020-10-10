@@ -6,6 +6,7 @@
         <div class="container">
             <h1><%- heading %></h1>
 
+            <!-- Account status -->
             <% if (message.length > 0) { %>
                 <div class="alert alert-warning"><%= message %></div>
             <% } %>
@@ -17,7 +18,8 @@
             </div>
             <% } %>
 
-            <form action="/profile" method="post" class="">
+            <!-- Update Account -->
+            <form action="/profile?_method=PUT" method="post" class="">
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input type="email" class="form-control" name="email" value="<%= user.email %>" disabled>
@@ -28,6 +30,20 @@
                 </div>
                 <input type="submit" class="btn btn-primary btn-lg" value="Update">
             </form>
+
+            <!-- Review List -->
+            <div class="my-4">
+                <h2>Your Reviews</h2>
+                <p>You have reviewed <%= reviews.length %> courses.</p>
+                <% reviews.forEach(function(review){ %>
+                    <div>
+                        <p class="my-1">
+                            <a class="btn btn-outline-secondary btn-sm" href="/update/<%- review.id %>">Edit</a>
+                            <a href="/review/<%- review.id %>"><%= review.course_id %>: <%= review.title %></a>
+                        </p>
+                    </div>
+                <% }) %>
+            </div>
         </div>
     </body>
 </html>
