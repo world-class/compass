@@ -237,124 +237,124 @@ module.exports = function(app, passport) {
 		});
 	});
 
-	app.get('/login', function(req, res) {
-		// render login page with flash messages, if any.
-		res.render('login.html', {
-			message: req.flash('loginMessage'),
-			heading: "Login",
-			title: "REPL Reviews - Login"
-		});
-	});
+    app.get('/login', function(req, res) {
+        // render login page with flash messages, if any.
+        res.render('login.html', {
+            message: req.flash('loginMessage'),
+            heading: "Login",
+            title: "REPL Reviews - Login"
+        });
+    });
 
-	// authenticate login requests with `local.login` strategy specified in auth.js
-	app.post('/login', passport.authenticate('local.login', {
-			failureRedirect : '/login',
-			failureFlash : true
-		}),
-		function(req, res) {
-			// Set cookie age to 7 days
-			req.session.cookie.maxAge = 7 * 24 * 60 * 60 * 1000;
-			res.redirect('/');
-		}
-	);
+    // authenticate login requests with `local.login` strategy specified in auth.js
+    app.post('/login', passport.authenticate('local.login', {
+            failureRedirect : '/login',
+            failureFlash : true
+        }),
+        function(req, res) {
+            // Set cookie age to 7 days
+            req.session.cookie.maxAge = 7 * 24 * 60 * 60 * 1000;
+            res.redirect('/');
+        }
+    );
 
 
-	app.get('/register', function(req, res) {
-		// render registration page with flash messages, if any.
-		res.render('register.html', {
-			message: req.flash('registrationMessage'),
-			heading: "Register",
-			title: "REPL Reviews - Register"
-		});
-	});
+    app.get('/register', function(req, res) {
+        // render registration page with flash messages, if any.
+        res.render('register.html', {
+            message: req.flash('registrationMessage'),
+            heading: "Register",
+            title: "REPL Reviews - Register"
+        });
+    });
 
-	// authenticate registration requests with `local.register` strategy specified in auth.js
-	app.post('/register', passport.authenticate('local.register', {
-		successRedirect : '/profile',
-		failureRedirect : '/register',
-		failureFlash : true
-	}));
+    // authenticate registration requests with `local.register` strategy specified in auth.js
+    app.post('/register', passport.authenticate('local.register', {
+        successRedirect : '/profile',
+        failureRedirect : '/register',
+        failureFlash : true
+    }));
 
-	// logout user
-	app.get('/logout', function(req, res) {
-		req.logout();
-		res.redirect('/');
-	});
+    // logout user
+    app.get('/logout', function(req, res) {
+        req.logout();
+        res.redirect('/');
+    });
 
-	// profile page of the user
-	app.get('/profile', checkAuth, function(req, res) {
-		// Get the user's reviews
-		let sqlquery = "SELECT reviews.id, \
-						reviews.course_id, \
-						courses.title \
-						FROM reviews \
-						JOIN courses \
-						ON reviews.course_id=courses.id \
-						JOIN users \
-						ON reviews.user_id=users.id \
-						WHERE reviews.user_id \
-						LIKE ?";
-		let id = [req.user.id];
+    // profile page of the user
+    app.get('/profile', checkAuth, function(req, res) {
+        // Get the user's reviews
+        let sqlquery = "SELECT reviews.id, \
+                        reviews.course_id, \
+                        courses.title \
+                        FROM reviews \
+                        JOIN courses \
+                        ON reviews.course_id=courses.id \
+                        JOIN users \
+                        ON reviews.user_id=users.id \
+                        WHERE reviews.user_id \
+                        LIKE ?";
+        let id = [req.user.id];
 
-		db.query(sqlquery, id, (err, result) => {
-			if (err) {
-				return console.error("Data not found: " + err.message);
-			}
-			res.render('profile.html', {
-				message: req.flash('profileMessage'),
-				heading: "Profile",
-				title: "REPL Reviews - profile",
-				reviews: result,
-				user: req.user
-			});
-		});
-	});
+        db.query(sqlquery, id, (err, result) => {
+            if (err) {
+                return console.error("Data not found: " + err.message);
+            }
+            res.render('profile.html', {
+                message: req.flash('profileMessage'),
+                heading: "Profile",
+                title: "REPL Reviews - profile",
+                reviews: result,
+                user: req.user
+            });
+        });
+    });
 
-	// Update profile details
-	app.put('/profile', checkAuth, function(req, res) {
-		db.query("UPDATE users SET username= ? WHERE id= ?",
-			[req.body.username, req.user.id],
-			(err, result) => {
-			if (err) {
-				req.flash('profileMessage', 'Could not update profile');
-				res.redirect('/profile');
-			}
-			req.flash('profileMessage', 'Profile updated');
-			res.redirect('/profile');
-		});
-	});
+    // Update profile details
+    app.put('/profile', checkAuth, function(req, res) {
+        db.query("UPDATE users SET username= ? WHERE id= ?",
+            [req.body.username, req.user.id],
+            (err, result) => {
+            if (err) {
+                req.flash('profileMessage', 'Could not update profile');
+                res.redirect('/profile');
+            }
+            req.flash('profileMessage', 'Profile updated');
+            res.redirect('/profile');
+        });
+    });
 
-	// Intiate slack authentication process
-	app.get('/auth/slack', passport.authorize('slack.login'));
+    // Intiate slack authentication process
+    app.get('/auth/slack', passport.authorize('slack.login'));
 
-	// OAuth callback url used by Slack
-	app.get('/auth/slack/callback',
-	passport.authorize('slack.login', {
-		failureRedirect: '/profile'
-	}),
-	(req, res) => res.redirect('/profile')
-	);
+    // OAuth callback url used by Slack
+    app.get('/auth/slack/callback',
+    passport.authorize('slack.login', {
+        failureRedirect: '/profile'
+    }),
+    (req, res) => res.redirect('/profile')
+    );
 };
 
 
 // middleware for blocking access to desired routes
 function checkAuth(req, res, next) {
-	if (req.isAuthenticated()) {
-		next();
-	} else {
-		req.flash('loginMessage', 'You have to login before you can access this page');
-		res.redirect('/login');
-	}
+    if (req.isAuthenticated()) {
+        next();
+    } else {
+        req.flash('loginMessage', 'You have to login before you can access this page');
+        res.redirect('/login');
+    }
 }
 
 // middleware for requiring verified account on desired routes
 function checkVerification(req, res, next) {
-	if (req.user.verified) {
-		next();
-	} else {
-		req.flash('profileMessage', 'You must verify your account before you can access this page.');
-		res.redirect('/profile');
-	}
+    if (req.user.verified) {
+        next();
+    } else {
+        req.flash('profileMessage', 'You must verify your account before you can access this page.');
+        res.redirect('/profile');
+    }
 }
 
 // middleware for checking if someone can add review
