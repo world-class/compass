@@ -38,7 +38,7 @@
                 <% reviews.forEach(function(review){ %>
                     <div>
                         <p class="my-1">
-                            <a class="btn btn-outline-secondary btn-sm" href="/update/<%- review.id %>">Edit</a>
+                            <a class="btn btn-outline-secondary btn-sm" href="/review/<%- review.id %>/update">Edit</a>
                             <a href="/review/<%- review.id %>"><%= review.course_id %>: <%= review.title %></a>
                         </p>
                     </div>
@@ -47,4 +47,3 @@
         </div>
     </body>
 </html>
-

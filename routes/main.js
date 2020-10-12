@@ -161,7 +161,7 @@ module.exports = function(app, passport) {
 	});
 
 	// get review to update by id and render form
-	app.get("/update/:id", checkAuth, canUpdateReview, function(req, res) {
+	app.get("/review/:id/update", checkAuth, canUpdateReview, function(req, res) {
 		// Get review to update by id
 		let sqlquery = "SELECT reviews.id, \
 						reviews.course_id, \
@@ -194,7 +194,7 @@ module.exports = function(app, passport) {
 	});
 
 	// update review in database
-	app.put("/update/:id", checkAuth, canUpdateReview, function(req, res) {
+	app.put("/review/:id/update", checkAuth, canUpdateReview, function(req, res) {
 		// Update by id
 		let sqlquery = "UPDATE reviews 	\
 						SET session = ?, \
@@ -214,23 +214,23 @@ module.exports = function(app, passport) {
 		db.query(sqlquery, entry, (err, result) => {
 			if (err) {
 				req.flash('editReviewMessage', 'Could not update review');
-				res.redirect('/update/' + req.params.id);
+				res.redirect('/review/' + req.params.id + '/update');
 			}
 			else{
 				req.flash('editReviewMessage', 'Review updated.');
-				res.redirect('/update/' + req.params.id);
+				res.redirect('/review/' + req.params.id + '/update');
 			}
 		});
 	});
 
 	// delete review in database by id
-	app.delete("/delete/:id", canUpdateReview, function(req, res) {
+	app.delete("/review/:id/delete", canUpdateReview, function(req, res) {
 		let sqlquery = "DELETE FROM reviews WHERE id = ?";
 		let id = [req.params.id];
 		db.query(sqlquery, id, (err, result) => {
 			if (err) {
 				req.flash('editReviewMessage', 'Could not delete review');
-				res.redirect('/update/' + req.params.id);
+				res.redirect('/review/' + req.params.id + '/update');
 			}else{
 				res.redirect('/profile');
 			}
@@ -371,7 +371,7 @@ function canAddReview(req, res, next) {
 			next();
 		} else {
 			req.flash('editReviewMessage', 'You have already reviewed this course. Would you like to edit it?');
-			res.redirect('/update/' + result[0].id);
+			res.redirect('/review/' + result[0].id + '/update');
 		}
 	});
 }

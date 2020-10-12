@@ -24,7 +24,7 @@
 						<h6 class="card-subtitle mb-2">Workload: <%- review.workload %> hours / week</h6>
 						<h6 class="card-subtitle mb-2">Rating: <%- review.rating %> / 5</h6>
 						<% if (typeof user !== 'undefined' && user.id == review.user_id) { %>
-							<a class="btn btn-outline-secondary btn-sm" href="/update/<%- review.id %>">Edit</a>
+							<a class="btn btn-outline-secondary btn-sm" href="/review/<%- review.id %>/update">Edit</a>
 						<% } %>
 					</div>
 				</div>
