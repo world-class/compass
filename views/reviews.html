@@ -11,7 +11,11 @@
 			<% reviews.forEach(function(review){ %>
 				<div class="card mb-3">
 					<div class="card-body">
-						<h5 class="card-title"><%- review.course_id %>: <%- review.title %></h5>
+						<h5 class="card-title">
+							<a href="/review/<%- review.id %>">
+								<%- review.course_id %>: <%- review.title %>
+							</a>
+						</h5>
 						<h6 class="card-subtitle mb-2 text-muted"><%- review.timestamp %></h6>
 						<h6 class="card-subtitle mb-2 text-muted"><%- review.author %></h6>
 						<h6 class="card-subtitle mb-2 text-muted"><%- review.session %></h6>
@@ -19,6 +23,9 @@
 						<h6 class="card-subtitle mb-2">Difficulty: <%- review.difficulty %> / 5</h6>
 						<h6 class="card-subtitle mb-2">Workload: <%- review.workload %> hours / week</h6>
 						<h6 class="card-subtitle mb-2">Rating: <%- review.rating %> / 5</h6>
+						<% if (typeof user !== 'undefined' && user.id == review.user_id) { %>
+							<a class="btn btn-outline-secondary btn-sm" href="/review/<%- review.id %>/update">Edit</a>
+						<% } %>
 					</div>
 				</div>
 			<% }) %>

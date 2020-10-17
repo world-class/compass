@@ -23,7 +23,7 @@ module.exports = function(app, passport) {
 				title: "REPL Reviews – Courses",
 				heading: "Courses",
 				courseReviewData: result,
-                user: req.user
+				user: req.user
 			});
 		});
 	});
@@ -47,7 +47,7 @@ module.exports = function(app, passport) {
 	});
 
 	// Add a review to the database and report success or failure. Requires authentication.
-	app.post("/added", checkAuth, checkVerification, function(req, res) {
+	app.post("/added", checkAuth, checkVerification, canAddReview, function(req, res) {
 		// saving data in database
 		let sqlquery = "INSERT INTO reviews (user_id, \
 											course_id, \
@@ -74,6 +74,42 @@ module.exports = function(app, passport) {
 		});
 	});
 
+	// Get single review by id
+	app.get("/review/:id", function(req, res) {
+
+		// Get review by id
+		let sqlquery = "SELECT reviews.id, \
+						reviews.course_id, \
+						reviews.user_id, \
+						users.username AS author, \
+						reviews.timestamp, \
+						courses.title, \
+						reviews.session, \
+						reviews.difficulty, \
+						reviews.workload, \
+						reviews.rating, \
+						reviews.text FROM reviews \
+						JOIN courses \
+						ON reviews.course_id=courses.id \
+						JOIN users \
+						ON reviews.user_id=users.id \
+						WHERE reviews.id \
+						LIKE ?";
+		let id = [req.params.id];
+
+		db.query(sqlquery, id, (err, result) => {
+			if (err) {
+				return console.error("Data not found: " + err.message);
+			}
+			res.render("reviews.html", {
+				title: "REPL Reviews – Review " + id[0],
+				heading: "Review #" + id[0],
+				reviews: result,
+				user: req.user
+			});
+		});
+	});
+
 	// List all reviews, optionally filtered by course_id
 	app.get("/reviews", function(req, res) {
 
@@ -85,8 +121,9 @@ module.exports = function(app, passport) {
 		*/
 
 		// Get all reviews. JOIN to courses table is required to get the course titles
-		let sqlquery =
-			"SELECT reviews.course_id, \
+		let sqlquery = "SELECT reviews.id, \
+						reviews.course_id, \
+						reviews.user_id, \
 						users.username AS author, \
 						reviews.timestamp, \
 						courses.title, \
@@ -94,7 +131,8 @@ module.exports = function(app, passport) {
 						reviews.difficulty, \
 						reviews.workload, \
 						reviews.rating, \
-						reviews.text FROM reviews \
+						reviews.text \
+						FROM reviews \
 						JOIN courses \
 						ON reviews.course_id=courses.id \
 						JOIN users \
@@ -114,11 +152,88 @@ module.exports = function(app, passport) {
 				return console.error("Data not found: " + err.message);
 			}
 			res.render("reviews.html", {
-				title: "REPL Reviews – All Reviews",
+				title: "REPL Reviews – Reviews",
 				heading: "Reviews",
 				reviews: result,
-                user: req.user
+				user: req.user	
 			});
+		});
+	});
+
+	// get review to update by id and render form
+	app.get("/review/:id/update", checkAuth, canUpdateReview, function(req, res) {
+		// Get review to update by id
+		let sqlquery = "SELECT reviews.id, \
+						reviews.course_id, \
+						courses.title, \
+						reviews.session, \
+						reviews.difficulty, \
+						reviews.workload, \
+						reviews.rating, \
+						reviews.text FROM reviews \
+						JOIN courses \
+						ON reviews.course_id=courses.id \
+						JOIN users \
+						ON reviews.user_id=users.id \
+						WHERE reviews.id \
+						LIKE ?";
+		let id = [req.params.id];
+
+		db.query(sqlquery, id, (err, result) => {
+			if (err) {
+				return console.error("Data not found: " + err.message);
+			}
+			res.render("editreview.html", {
+				message: req.flash('editReviewMessage'),
+				title: "REPL Reviews – Edit Review ",
+				heading: "Edit Review #" + id[0],
+				review: result[0],
+				user: req.user
+			});
+		});
+	});
+
+	// update review in database
+	app.put("/review/:id/update", checkAuth, canUpdateReview, function(req, res) {
+		// Update by id
+		let sqlquery = "UPDATE reviews 	\
+						SET session = ?, \
+						difficulty = ?,	\
+						workload = ?, \
+						rating = ?, \
+						text = ? \
+						WHERE id = ?";
+		let entry = [
+			req.body.session, 
+			req.body.difficulty, 
+			req.body.workload, 
+			req.body.rating, 
+			req.body.text,
+			req.params.id
+		];
+		db.query(sqlquery, entry, (err, result) => {
+			if (err) {
+				req.flash('editReviewMessage', 'Could not update review');
+				res.redirect('/review/' + req.params.id + '/update');
+			}
+			else{
+				req.flash('editReviewMessage', 'Review updated.');
+				res.redirect('/review/' + req.params.id + '/update');
+			}
+		});
+	});
+
+	// delete review in database by id
+	app.delete("/review/:id/delete", canUpdateReview, function(req, res) {
+		let sqlquery = "DELETE FROM reviews WHERE id = ?";
+		let id = [req.params.id];
+		db.query(sqlquery, id, (err, result) => {
+			if (err) {
+				req.flash('editReviewMessage', 'Could not delete review');
+				res.redirect('/review/' + req.params.id + '/update');
+			}else{
+				res.redirect('/profile');
+			}
 		});
 	});
 
@@ -168,16 +283,35 @@ module.exports = function(app, passport) {
 
     // profile page of the user
     app.get('/profile', checkAuth, function(req, res) {
-        res.render('profile.html', {
-            message: req.flash('profileMessage'),
-            heading: "Profile",
-            title: "REPL Reviews - profile",
-            user: req.user
+        // Get the user's reviews
+        let sqlquery = "SELECT reviews.id, \
+                        reviews.course_id, \
+                        courses.title \
+                        FROM reviews \
+                        JOIN courses \
+                        ON reviews.course_id=courses.id \
+                        JOIN users \
+                        ON reviews.user_id=users.id \
+                        WHERE reviews.user_id \
+                        LIKE ?";
+        let id = [req.user.id];
+
+        db.query(sqlquery, id, (err, result) => {
+            if (err) {
+                return console.error("Data not found: " + err.message);
+            }
+            res.render('profile.html', {
+                message: req.flash('profileMessage'),
+                heading: "Profile",
+                title: "REPL Reviews - profile",
+                reviews: result,
+                user: req.user
+            });
         });
     });
 
     // Update profile details
-    app.post('/profile', checkAuth, function(req, res) {
+    app.put('/profile', checkAuth, function(req, res) {
         db.query("UPDATE users SET username= ? WHERE id= ?",
             [req.body.username, req.user.id],
             (err, result) => {
@@ -195,10 +329,10 @@ module.exports = function(app, passport) {
 
     // OAuth callback url used by Slack
     app.get('/auth/slack/callback',
-      passport.authorize('slack.login', {
-          failureRedirect: '/profile'
-      }),
-      (req, res) => res.redirect('/profile')
+    passport.authorize('slack.login', {
+        failureRedirect: '/profile'
+    }),
+    (req, res) => res.redirect('/profile')
     );
 };
 
@@ -221,5 +355,41 @@ function checkVerification(req, res, next) {
         req.flash('profileMessage', 'You must verify your account before you can access this page.');
         res.redirect('/profile');
     }
+}
+
+// middleware for checking if someone can add review
+function canAddReview(req, res, next) {
+	sqlquery = "SELECT id FROM reviews WHERE course_id = ? AND user_id = ?;"
+	entry = [req.body.course_id, req.user.id];
+
+	db.query(sqlquery, entry, (err, result) => {
+		if (err) {
+			console.error("Data not found: " + err.message);
+			res.redicrect('/')
+		}
+		else if (result.length < 1){
+			next();
+		} else {
+			req.flash('editReviewMessage', 'You have already reviewed this course. Would you like to edit it?');
+			res.redirect('/review/' + result[0].id + '/update');
+		}
+	});
+}
+
+// middleware for checking if someone can update review
+function canUpdateReview(req, res, next) {
+	sqlquery = "SELECT user_id FROM reviews WHERE id = ? LIMIT 1;"
+
+	db.query(sqlquery, [req.params.id], (err, result) => {
+		if (err) {
+			return console.error("Data not found: " + err.message);
+		}
+		else if (result[0].user_id == req.user.id){
+			next();
+		} else {
+			req.flash('profileMessage', 'You can only edit reviews you own');
+			res.redirect('/profile');
+		}
+	});
 }
 

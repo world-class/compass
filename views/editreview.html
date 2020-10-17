@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+	<!-- EJS head partial -->
+	<%- include('partials/head.ejs'), {title: title}%>
+	<body>
+		<!-- Express snippet to include the header and navigation from a partial -->
+		<%- include('partials/nav.ejs') %>
+		<div class="container">
+			<!-- Page content begins below-->
+			<h1><%- heading %></h1>
+
+			<!-- Flash Message -->
+			<% if (message.length > 0) { %>
+				<div class="alert alert-warning"><%= message %> <a href="/review/<%= review.id %>">Visit review</a></div>
+			<% } %>
+
+			<!-- Form -->
+			<!-- overrides method with query string -->
+			<form action="/review/<%= review.id %>/delete?_method=DELETE" method="POST" class="mb-4">
+				<input 
+					class="btn btn-danger" 
+					type="submit" 
+					value="Delete Review"
+					onclick="return confirm('Are you sure you want to delete this review? This action cannot be undone.')"
+				/>
+			</form>
+			<!-- overrides method with query string -->
+			<form action="/review/<%- review.id %>/update?_method=PUT" method="POST" class="mb-4">
+				<div class="form-group">
+					<label for="module">Module</label>
+					<select
+						class="form-control selectpicker"
+						disabled
+					>
+						<option><%= review.course_id %> - <%= review.title %></option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="session">Session</label>
+					<select
+						class="form-control selectpicker"
+						data-live-search="true"
+						id="session"
+						name="session"
+						title="Choose a session..."
+						required
+					>
+					<!-- options added by js here -->
+					</select>
+					<!-- save review.session as a js object so we can use it in external js file -->
+					<script>
+						const reviewSession = '<%- JSON.stringify(review.session) %>';
+					</script>
+				</div>
+				<div class="form-group">
+					<label for="difficulty">How difficult was this module?</label>
+					<select class="form-control" id="difficulty" name="difficulty" required>
+						<option value="1" <% if(review.difficulty == 1){ %> selected <% } %>>1 - Trivial</option>
+						<option value="2" <% if(review.difficulty == 2){ %> selected <% } %>>2 - Easy</option>
+						<option value="3" <% if(review.difficulty == 3){ %> selected <% } %>>3 - Moderate</option>
+						<option value="4" <% if(review.difficulty == 4){ %> selected <% } %>>4 - Challenging</option>
+						<option value="5" <% if(review.difficulty == 5){ %> selected <% } %>>5 - Hard</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="workload">How many hours per week did you work?</label>
+					<input 
+						class="form-control" 
+						type="number" 
+						id="workload" 
+						name="workload" 
+						min="0" 
+						max="168" 
+						value = "<%- review.workload %>" 
+						required 
+					/>
+				</div>
+				<div class="form-group">
+					<label for="rating">How would you rate the quality of this module?</label>
+					<select class="form-control" id="rating" name="rating" required>
+						<option value="" selected disabled hidden>Choose a value...</option>
+						<option value="1" <% if(review.rating == 1){ %> selected <% } %>>1 - Very Poor</option>
+						<option value="2" <% if(review.rating == 2){ %> selected <% } %>>2 - Poor</option>
+						<option value="3" <% if(review.rating == 3){ %> selected <% } %>>3 - Adequate</option>
+						<option value="4" <% if(review.rating == 4){ %> selected <% } %>>4 - Good</option>
+						<option value="5" <% if(review.rating == 5){ %> selected <% } %>>5 - Excellent</option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label for="text">Your Review</label>
+					<textarea 
+						class="form-control" 
+						id="text" 
+						name="text" 
+						rows="4"
+						required
+					><%= review.text %></textarea>
+				</div>
+				<input class="btn btn-primary" type="submit" value="Update" />
+			</form>
+		</div>
+		<!-- Optional js -->
+		<script type="module" src="/js/editreview.js"></script>
+		<!-- Bootstrap Elements -->
+		<%- include('partials/bootstrap_reqs.ejs')%>
+		<!-- Bootstrap Select Elements -->
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+	</body>
+</html>

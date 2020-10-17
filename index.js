@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const methodOverride = require("method-override");
 const mysql = require("mysql");
 const path = require("path");
 const app = express();
@@ -46,6 +47,7 @@ global.db = db;
 require("./config/auth")(passport);
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(methodOverride('_method'));
 
 // create session store. Use memorystore for now and migrate to MySQL later.
 app.use(session({
