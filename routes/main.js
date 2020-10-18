@@ -20,7 +20,7 @@ module.exports = function (app, passport) {
 				return console.error("Data not found: " + err.message);
 			}
 			res.render("index.html", {
-				title: "REPL Reviews – Courses",
+				title: "Compass – Courses",
 				heading: "Courses",
 				courseReviewData: result,
 				user: req.user,
@@ -37,7 +37,7 @@ module.exports = function (app, passport) {
 				return console.error("Data not found: " + err.message);
 			}
 			res.render("addreview.html", {
-				title: "REPL Reviews – Add Review",
+				title: "Compass – Add Review",
 				heading: "Add Review",
 				courseList: result,
 				addResult: req.query.addResult,
@@ -94,7 +94,7 @@ module.exports = function (app, passport) {
 				return console.error("Data not found: " + err.message);
 			}
 			res.render("reviews.html", {
-				title: "REPL Reviews – Review " + id[0],
+				title: "Compass – Review " + id[0],
 				heading: "Review #" + id[0],
 				reviews: result,
 				user: req.user,
@@ -144,7 +144,7 @@ module.exports = function (app, passport) {
 				return console.error("Data not found: " + err.message);
 			}
 			res.render("reviews.html", {
-				title: "REPL Reviews – Reviews",
+				title: "Compass – Reviews",
 				heading: "Reviews",
 				reviews: result,
 				user: req.user,
@@ -178,7 +178,7 @@ module.exports = function (app, passport) {
 			}
 			res.render("editreview.html", {
 				message: req.flash("editReviewMessage"),
-				title: "REPL Reviews – Edit Review ",
+				title: "Compass – Edit Review ",
 				heading: "Edit Review #" + id[0],
 				review: result[0],
 				user: req.user,
@@ -227,7 +227,7 @@ module.exports = function (app, passport) {
 		res.render("login.html", {
 			message: req.flash("loginMessage"),
 			heading: "Login",
-			title: "REPL Reviews - Login",
+			title: "Compass - Login",
 		});
 	});
 
@@ -250,7 +250,7 @@ module.exports = function (app, passport) {
 		res.render("register.html", {
 			message: req.flash("registrationMessage"),
 			heading: "Register",
-			title: "REPL Reviews - Register",
+			title: "Compass - Register",
 		});
 	});
 
@@ -293,7 +293,7 @@ module.exports = function (app, passport) {
 			res.render("profile.html", {
 				message: req.flash("profileMessage"),
 				heading: "Profile",
-				title: "REPL Reviews - profile",
+				title: "Compass - profile",
 				reviews: result,
 				user: req.user,
 			});
