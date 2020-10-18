@@ -34,7 +34,8 @@
             <!-- Review List -->
             <div class="my-4">
                 <h2>Your Reviews</h2>
-                <p>You have reviewed <%= reviews.length %> courses.</p>
+                <% let reviewCount = (reviews !== undefined) ? reviews.length : 0; %>
+                <p>You have reviewed <%= reviewCount %> courses.</p>
                 <% reviews.forEach(function(review){ %>
                     <div>
                         <p class="my-1">
