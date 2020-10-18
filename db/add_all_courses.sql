@@ -1,4 +1,4 @@
-USE repl_reviews;
+USE compass_db;
 
 INSERT INTO
 	courses(id, title, required)
