@@ -1,35 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%- include('partials/head.ejs'), {title: title}%>
-    <body>
-        <%- include('partials/nav.ejs') %>
-        <div class="container">
-            <h1><%- heading %></h1>
+	<%- include('partials/head.ejs'), {title: title}%>
+	<body>
+		<%- include('partials/nav.ejs') %>
+		<div class="container">
+			<h1><%- heading %></h1>
 
-            <!-- Account status -->
-            <% if (message.length > 0) { %>
-                <div class="alert alert-warning"><%= message %></div>
-            <% } %>
-            <% if (user.verified) { %>
-            <div class="alert alert-success">Account status: verified</div>
-            <% } else { %>
-            <div class="alert alert-danger">Please verify your account with Slack.
-            <a href="/auth/slack"><img class="" alt="verify in with Slack" height="40" width="172" src="https://platform.slack-edge.com/img/sign_in_with_slack.png" srcset="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x" /></a>
-            </div>
-            <% } %>
+			<!-- Account status -->
+			<% if (message.length > 0) { %>
+			<div class="alert alert-warning"><%= message %></div>
+			<% } %> <% if (user.verified) { %>
+			<div class="alert alert-success">Account status: verified</div>
+			<% } else { %>
+			<div class="alert alert-danger">
+				Please verify your account with Slack.
+				<a href="/auth/slack"
+					><img
+						class=""
+						alt="verify in with Slack"
+						height="40"
+						width="172"
+						src="https://platform.slack-edge.com/img/sign_in_with_slack.png"
+						srcset="
+							https://platform.slack-edge.com/img/sign_in_with_slack.png    1x,
+							https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x
+						"
+				/></a>
+			</div>
+			<% } %>
 
-            <!-- Update Account -->
-            <form action="/profile?_method=PUT" method="post" class="">
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" class="form-control" name="email" value="<%= user.email %>" disabled>
-                </div>
-                <div class="form-group">
-                    <label for="username">Full name</label>
-                    <input type="text" class="form-control" name="username" value="<%= user.username %>">
-                </div>
-                <input type="submit" class="btn btn-primary btn-lg" value="Update">
-            </form>
+			<!-- Update Account -->
+			<form action="/profile?_method=PUT" method="post" class="">
+				<div class="form-group">
+					<label for="email">Email</label>
+					<input type="email" class="form-control" name="email" value="<%= user.email %>" disabled />
+				</div>
+				<div class="form-group">
+					<label for="username">Full name</label>
+					<input type="text" class="form-control" name="username" value="<%= user.username %>" />
+				</div>
+				<input type="submit" class="btn btn-primary btn-lg" value="Update" />
+			</form>
+
 
             <!-- Review List -->
             <div class="my-4">
@@ -47,4 +59,5 @@
             </div>
         </div>
     </body>
+
 </html>

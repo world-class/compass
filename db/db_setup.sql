@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXISTS repl_reviews;
+CREATE DATABASE IF NOT EXISTS compass_db;
 
-USE repl_reviews;
+USE compass_db;
 
 DROP TABLE IF EXISTS reviews;
 

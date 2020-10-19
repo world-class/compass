@@ -9,7 +9,7 @@ const session = require("express-session");
 const passport = require("passport");
 const flash = require("connect-flash");
 
-require('dotenv').config();
+require("dotenv").config();
 app.use(express.static(path.join(__dirname, "/public")));
 
 const db = mysql.createConnection({
@@ -47,14 +47,16 @@ global.db = db;
 require("./config/auth")(passport);
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(methodOverride('_method'));
+app.use(methodOverride("_method"));
 
 // create session store. Use memorystore for now and migrate to MySQL later.
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: true,
-    saveUninitialized: false
-}));
+app.use(
+	session({
+		secret: process.env.SESSION_SECRET,
+		resave: true,
+		saveUninitialized: false,
+	})
+);
 
 // Initialize passportjs
 app.use(passport.initialize());
