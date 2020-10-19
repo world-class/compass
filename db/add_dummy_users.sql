@@ -1,4 +1,4 @@
-INSERT INTO 
-	users(username, email, password, verified, slackuid)
+INSERT INTO
+	users(username, email, slackuid)
 VALUES
-	('userName', 'user@email.com', 'somepw1', 1, 'userslackid');
+	('userName', 'user@email.com', 'userslackid');

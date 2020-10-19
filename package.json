@@ -4,7 +4,6 @@
   "description": "Compass - Suite of tools for UoL BScCS students",
   "main": "index.js",
   "dependencies": {
-    "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "connect-flash": "^0.1.1",
     "dotenv": "^8.2.0",
@@ -16,7 +15,6 @@
     "method-override": "^3.0.0",
     "mysql": "^2.18.1",
     "passport": "^0.4.1",
-    "passport-local": "^1.0.0",
     "passport-slack": "0.0.7"
   },
   "devDependencies": {

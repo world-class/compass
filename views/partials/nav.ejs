@@ -24,7 +24,18 @@
 			<a href="/profile" class="nav-link">Profile</a>
 			<a href="/logout" class="nav-link">Logout</a>
 			<% } else { %>
-			<a href="/login" class="nav-link">Login</a>
+			<a href="/auth/slack"
+				><img
+					class=""
+					alt="verify in with Slack"
+					height="40"
+					width="172"
+					src="https://platform.slack-edge.com/img/sign_in_with_slack.png"
+					srcset="
+						https://platform.slack-edge.com/img/sign_in_with_slack.png    1x,
+						https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x
+					"
+			/></a>
 			<% } %>
 		</div>
 	</div>
