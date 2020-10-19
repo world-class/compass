@@ -1,15 +1,15 @@
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const methodOverride = require("method-override");
 const mysql = require("mysql");
 const path = require("path");
 const app = express();
-const port = 8087;
+const port = process.env.PORT || 8087;
 const session = require("express-session");
 const passport = require("passport");
 const flash = require("connect-flash");
 
-require("dotenv").config();
 app.use(express.static(path.join(__dirname, "/public")));
 
 const db = mysql.createConnection({
