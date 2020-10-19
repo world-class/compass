@@ -329,6 +329,12 @@ module.exports = function (app, passport) {
 		}),
 		(req, res) => res.redirect("/profile")
 	);
+
+	// handle 500 server errors
+	app.use(function (err, req, res, next) {
+		console.error(err.stack);
+		res.status(500).send("<h1>500: Internal server error</h1>");
+	});
 };
 
 // middleware for blocking access to desired routes
