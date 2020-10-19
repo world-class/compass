@@ -294,7 +294,7 @@ module.exports = function (app, passport) {
 				message: req.flash("profileMessage"),
 				heading: "Profile",
 				title: "Compass - profile",
-				reviews: result,
+				reviews: typeof result == "undefined" ? [] : result,
 				user: req.user,
 			});
 		});
