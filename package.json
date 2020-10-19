@@ -1,7 +1,7 @@
 {
-  "name": "repl-reviews",
-  "version": "1.0.0",
-  "description": "REPL Reviews",
+  "name": "compass",
+  "version": "0.1.0",
+  "description": "Compass - Suite of tools for UoL BScCS students",
   "main": "index.js",
   "dependencies": {
     "bcrypt": "^5.0.0",
@@ -25,5 +25,5 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "MIT"
 }
