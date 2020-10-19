@@ -1,6 +1,4 @@
-
 const { body, validationResult } = require("express-validator");
-
 
 module.exports = function (app, passport) {
 	// List all courses and their scores
@@ -53,7 +51,6 @@ module.exports = function (app, passport) {
 	// Add a review to the database and report success or failure. Requires authentication.
 
 	app.post("/added", checkAuth, checkVerification, canAddReview, body("text").escape(), function (req, res) {
-
 		// saving data in database
 		let sqlquery = "INSERT INTO reviews (user_id, \
 											course_id, \
@@ -329,6 +326,19 @@ module.exports = function (app, passport) {
 		}),
 		(req, res) => res.redirect("/profile")
 	);
+
+	// handle pages not found. This should be the second last route.
+	app.use(function (req, res) {
+		res.status(404).render("404.html", {
+			title: "Compass - Page not found",
+		});
+	});
+
+	// handle 500 server errors. This should be the last route.
+	app.use(function (err, req, res, next) {
+		console.error(err.stack);
+		res.status(500).send("<h1>500: Internal server error</h1>");
+	});
 };
 
 // middleware for blocking access to desired routes
