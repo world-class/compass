@@ -17,11 +17,9 @@ CREATE TABLE `courses` (
 
 CREATE TABLE `users` (
     `id` INT NOT NULL AUTO_INCREMENT,
-    `username` VARCHAR(30) NOT NULL,
-    `email` VARCHAR(60) UNIQUE NOT NULL,
-    `password` VARCHAR(60) NOT NULL,
-    `verified` BIT NOT NULL DEFAULT 0,
-    `slackuid` VARCHAR(25) UNIQUE,
+    `username` VARCHAR(80) NOT NULL,
+    `email` VARCHAR(80),
+    `slackuid` VARCHAR(25) NOT NULL UNIQUE,
     PRIMARY KEY (`id`)
 );
 
