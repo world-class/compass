@@ -7,6 +7,7 @@ const path = require("path");
 const app = express();
 const port = process.env.PORT || 8087;
 const session = require("express-session");
+const MySQLStore = require("express-mysql-session")(session);
 const passport = require("passport");
 const flash = require("connect-flash");
 
@@ -32,6 +33,8 @@ const db = mysql.createConnection({
 	},
 });
 
+const sessionStore = new MySQLStore({}, db);
+
 // connect to database
 db.connect((err) => {
 	if (err) {
@@ -52,8 +55,10 @@ app.use(methodOverride("_method"));
 // create session store. Use memorystore for now and migrate to MySQL later.
 app.use(
 	session({
+		key: "compass-session",
 		secret: process.env.SESSION_SECRET,
-		resave: true,
+		store: sessionStore,
+		resave: false,
 		saveUninitialized: false,
 	})
 );
