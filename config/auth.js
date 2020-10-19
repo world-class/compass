@@ -24,7 +24,7 @@ module.exports = function (passport) {
 			{
 				clientID: process.env.SLACK_CLIENT_ID,
 				clientSecret: process.env.SLACK_CLIENT_SECRET,
-				scope: ["identity.basic", "identity.team"],
+				scope: ["identity.basic", "identity.team", "identity.email"],
 				passReqToCallback: true,
 			},
 			(req, accessToken, refreshToken, profile, done) => {
