@@ -1,4 +1,6 @@
-module.exports = function(app, passport) {
+const { body, validationResult } = require("express-validator");
+
+module.exports = function (app, passport) {
 	// List all courses and their scores
 	app.get("/", function(req, res) {
 		// Get a list of all courses and calculate the average scores to show
@@ -47,7 +49,7 @@ module.exports = function(app, passport) {
 	});
 
 	// Add a review to the database and report success or failure. Requires authentication.
-	app.post("/added", checkAuth, checkVerification, canAddReview, function(req, res) {
+	app.post("/added", checkAuth, checkVerification, canAddReview, body("text").escape(), function (req, res) {
 		// saving data in database
 		let sqlquery = "INSERT INTO reviews (user_id, \
 											course_id, \
