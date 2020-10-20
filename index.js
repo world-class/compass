@@ -1,11 +1,15 @@
 require("dotenv").config();
+const fs = require("fs");
+const http = require("http");
+const https = require("https");
 const express = require("express");
 const bodyParser = require("body-parser");
 const methodOverride = require("method-override");
 const mysql = require("mysql");
 const path = require("path");
 const app = express();
-const port = process.env.PORT || 8087;
+const httpPort = process.env.HTTP_PORT || 8087;
+const httpsPort = process.env.HTTPS_PORT || 8443;
 const session = require("express-session");
 const MySQLStore = require("express-mysql-session")(session);
 const passport = require("passport");
@@ -73,4 +77,26 @@ require("./routes/main")(app, passport);
 app.set("views", __dirname + "/views");
 app.set("view engine", "ejs");
 app.engine("html", require("ejs").renderFile);
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+
+const httpServer = http.createServer(app);
+
+// create HTTP server
+httpServer.listen(httpPort, () => {
+	console.log(`compass http listening on port ${httpPort}!`);
+});
+
+if (process.env.NODE_ENV == "PROD") {
+	const certDir = process.env.TLS_CERTDIR;
+	const tlsOptions = {
+		key: fs.readFileSync(certDir + "privkey.pem", "utf8"),
+		cert: fs.readFileSync(certDir + "cert.pem", "utf8"),
+		ca: fs.readFileSync(certDir + "chain.pem", "utf8"),
+	};
+
+	// create HTTPS server
+	const httpsServer = https.createServer(tlsOptions, app);
+
+	httpsServer.listen(httpsPort, () => {
+		console.log(`compass https listening on port ${httpsPort}!`);
+	});
+}
