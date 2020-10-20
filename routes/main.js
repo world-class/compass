@@ -1,4 +1,4 @@
-const { body, validationResult } = require("express-validator");
+const validator = require("validator");
 
 module.exports = function (app, passport) {
 	// List all courses and their scores
@@ -52,8 +52,7 @@ module.exports = function (app, passport) {
 
 	// Add a review to the database and report success or failure. Requires authentication.
 
-	app.post("/added", checkAuth, canAddReview, body("text").escape(), function (req, res) {
-
+	app.post("/add", checkAuth, canAddReview, validateReview, function (req, res) {
 		// saving data in database
 		let sqlquery = "INSERT INTO reviews (user_id, \
 											course_id, \
@@ -182,6 +181,8 @@ module.exports = function (app, passport) {
 			if (err) {
 				return console.error("Data not found: " + err.message);
 			}
+			// replaced HTML characters for editing again.
+			result[0].text = validator.unescape(result[0].text);
 			res.render("editreview.html", {
 				message: req.flash("editReviewMessage"),
 				title: "Compass – Edit Review ",
@@ -193,7 +194,8 @@ module.exports = function (app, passport) {
 	});
 
 	// update review in database
-	app.put("/review/:id/update", checkAuth, canUpdateReview, function (req, res) {
+	app.put("/review/:id/update", checkAuth, canUpdateReview, validateReview, function (req, res) {
+		let errors = [];
 		// Update by id
 		let sqlquery = "UPDATE reviews 	\
 						SET session = ?, \
@@ -273,7 +275,7 @@ module.exports = function (app, passport) {
 		"/auth/slack/callback",
 		passport.authenticate("slack.login", {
 			failureRedirect: "/",
-            failureFlash: 'Slack login failed'
+			failureFlash: "Slack login failed",
 		}),
 		function (req, res) {
 			// Set cookie age to 7 days
@@ -338,4 +340,25 @@ function canUpdateReview(req, res, next) {
 			res.redirect("/profile");
 		}
 	});
+}
+
+// middleware for sanitizing and validaitng new or updated review
+function validateReview(req, res, next) {
+	// Sanitize user input
+	req.body.text = validator.escape(req.body.text);
+	req.body.session = validator.escape(req.body.session);
+
+	// Validate user input
+	if (
+		validator.isInt(req.body.workload, { min: 1, max: 70 }) &&
+		validator.isInt(req.body.rating, { min: 1, max: 5 }) &&
+		validator.isInt(req.body.difficulty, { min: 1, max: 5 }) &&
+		validator.isInt(req.body.difficulty) &&
+		validator.isLength(req.body.text, { min: 1, max: 8000 })
+	) {
+		// if all validation passes proceed
+		next();
+	} else {
+		res.status(500).send("<h1>500: Internal server error</h1>");
+	}
 }
