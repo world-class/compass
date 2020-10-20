@@ -11,11 +11,11 @@
     "express": "^4.17.1",
     "express-mysql-session": "^2.1.4",
     "express-session": "^1.17.1",
-    "express-validator": "^6.6.1",
     "method-override": "^3.0.0",
     "mysql": "^2.18.1",
     "passport": "^0.4.1",
-    "passport-slack": "0.0.7"
+    "passport-slack": "0.0.7",
+    "validator": "^13.1.17"
   },
   "devDependencies": {
     "prettier": "^2.1.2"

@@ -12,7 +12,7 @@
 			<% if (addResult == "success") { %>
 			<div class="alert alert-success" role="alert">Your review was successfully added. Thanks!</div>
 			<% } %>
-			<form action="/added" method="POST" class="mb-4">
+			<form action="/add" method="POST" class="mb-4">
 				<div class="form-group">
 					<label for="module">Module</label>
 					<select
@@ -55,7 +55,7 @@
 
 				<div class="form-group">
 					<label for="workload">How many hours per week did you work?</label>
-					<input class="form-control" type="number" id="workload" name="workload" min="0" max="168" required />
+					<input class="form-control" type="number" id="workload" name="workload" min="0" max="70" required />
 				</div>
 
 				<div class="form-group">
@@ -72,7 +72,7 @@
 
 				<div class="form-group">
 					<label for="text">Your Review</label>
-					<textarea class="form-control" id="text" name="text" rows="4" required></textarea>
+					<textarea class="form-control" id="text" name="text" rows="4" maxlength="8000" required></textarea>
 				</div>
 				<input class="btn btn-primary" type="submit" value="Submit" />
 			</form>
