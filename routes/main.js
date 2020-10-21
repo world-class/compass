@@ -1,4 +1,3 @@
-const { session } = require("passport");
 const validator = require("validator");
 
 module.exports = function (app, passport) {
