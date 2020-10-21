@@ -8,6 +8,8 @@ DROP TABLE IF EXISTS courses;
 
 DROP TABLE IF EXISTS users;
 
+DROP TABLE IF EXISTS _sessions; 
+
 CREATE TABLE `courses` (
 	`id` VARCHAR(6),
 	`title` VARCHAR(100),
@@ -36,4 +38,11 @@ CREATE TABLE `reviews` (
 	PRIMARY KEY (`id`),
 	FOREIGN KEY (course_id) REFERENCES courses(id),
 	FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE `_sessions` (
+	`id` INT NOT NULL AUTO_INCREMENT,
+	`name_string` VARCHAR(50),
+	`start_date` DATE,
+	PRIMARY KEY (`id`)
 );
