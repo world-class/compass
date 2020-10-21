@@ -38,7 +38,9 @@
 						title="Choose a session..."
 						required
 					>
-						<!-- options added by js here -->
+						<% sessionList.forEach(function(session){ %>
+						<option value="<%= session.name_string %>"><%= session.name_string %></option>
+						<% }) %>
 					</select>
 				</div>
 				<div class="form-group">
@@ -78,7 +80,6 @@
 			</form>
 		</div>
 		<!-- Optional js -->
-		<script type="module" src="/js/addreview.js"></script>
 		<!-- Bootstrap Elements -->
 		<%- include('partials/bootstrap_reqs.ejs')%>
 		<!-- Bootstrap Select Elements -->

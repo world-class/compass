@@ -45,7 +45,9 @@
 						title="Choose a session..."
 						required
 					>
-					<!-- options added by js here -->
+						<% sessionList.forEach(function(session){ %>
+						<option value="<%= session.name_string %>"><%= session.name_string %></option>
+						<% }) %>
 					</select>
 					<!-- save review.session as a js object so we can use it in external js file -->
 					<script>

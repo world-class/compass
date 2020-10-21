@@ -1,3 +1,4 @@
+const { session } = require("passport");
 const validator = require("validator");
 
 module.exports = function (app, passport) {
@@ -34,21 +35,28 @@ module.exports = function (app, passport) {
 
 	// Display a form to add a review. Requires authentication.
 	app.get("/add", checkAuth, function (req, res) {
-		// Get a list of all courses to populate the module selection UI
-		let sql = "SELECT id, title FROM courses";
-		db.query(sql, (err, result) => {
-			if (err) {
-				return console.error("Data not found: " + err.message);
-			}
-			res.render("addreview.html", {
-				title: "Compass – Add Review",
-				heading: "Add Review",
-				courseList: result,
-				addResult: req.query.addResult,
-				user: req.user,
-			});
-		});
-	});
+        let courseSql = "SELECT id, title FROM courses";
+        let sessionSql = "SELECT name_string FROM _sessions WHERE start_date <= CURDATE()";
+
+        db.query(courseSql, (courseErr, courseResult) => {
+            if (courseErr) {
+                return console.error("Data not found: " + courseErr.message);
+            }
+            db.query(sessionSql, (sessionErr, sessionResult) => {
+                if (sessionErr) {
+                    return console.error("Data not found: " + sessionErr.message);
+                }
+                res.render("addreview.html", {
+                    title: "Compass – Add Review",
+                    heading: "Add Review",
+                    courseList: courseResult,
+                    sessionList: sessionResult,
+                    addResult: req.query.addResult,
+                    user: req.user,
+                });
+            });
+        });
+    });
 
 	// Add a review to the database and report success or failure. Requires authentication.
 
@@ -160,7 +168,8 @@ module.exports = function (app, passport) {
 	// get review to update by id and render form
 	app.get("/review/:id/update", checkAuth, canUpdateReview, function (req, res) {
 		// Get review to update by id
-		let sqlquery =
+		let sessionSql = "SELECT name_string FROM _sessions WHERE start_date <= CURDATE()";
+		let reviewSql =
 			"SELECT reviews.id, \
 						reviews.course_id, \
 						courses.title, \
@@ -177,18 +186,25 @@ module.exports = function (app, passport) {
 						LIKE ?";
 		let id = [req.params.id];
 
-		db.query(sqlquery, id, (err, result) => {
-			if (err) {
-				return console.error("Data not found: " + err.message);
+		db.query(reviewSql, id, (reviewErr, reviewResult) => {
+			if (reviewErr) {
+				return console.error("Data not found: " + reviewErr.message);
 			}
-			// replaced HTML characters for editing again.
-			result[0].text = validator.unescape(result[0].text);
-			res.render("editreview.html", {
-				message: req.flash("editReviewMessage"),
-				title: "Compass – Edit Review ",
-				heading: "Edit Review #" + id[0],
-				review: result[0],
-				user: req.user,
+			db.query(sessionSql, (sessionErr, sessionResult) => {
+                if (sessionErr) {
+                    return console.error("Data not found: " + sessionErr.message);
+                }
+				// replaced HTML characters for editing again.
+				reviewResult[0].text = validator.unescape(reviewResult[0].text);
+
+				res.render("editreview.html", {
+					message: req.flash("editReviewMessage"),
+					title: "Compass – Edit Review ",
+					heading: "Edit Review #" + id[0],
+					review: reviewResult[0],
+					sessionList: sessionResult,
+					user: req.user,
+				});
 			});
 		});
 	});
@@ -348,17 +364,33 @@ function validateReview(req, res, next) {
 	req.body.text = validator.escape(req.body.text);
 	req.body.session = validator.escape(req.body.session);
 
-	// Validate user input
-	if (
-		validator.isInt(req.body.workload, { min: 1, max: 70 }) &&
-		validator.isInt(req.body.rating, { min: 1, max: 5 }) &&
-		validator.isInt(req.body.difficulty, { min: 1, max: 5 }) &&
-		validator.isInt(req.body.difficulty) &&
-		validator.isLength(req.body.text, { min: 1, max: 8000 })
-	) {
-		// if all validation passes proceed
-		next();
-	} else {
-		res.status(500).send("<h1>500: Internal server error</h1>");
-	}
+	let sessionSql = "SELECT name_string FROM _sessions WHERE start_date <= CURDATE()";
+	db.query(sessionSql, (sessionErr, sessionResult) => {
+		if (sessionErr) {
+			return console.error("Data not found: " + sessionErr.message);
+		}
+
+		function isSessionValid() {
+			let options = [];
+			sessionResult.forEach(items => {
+				options.push(items.name_string)
+			});
+			return options.includes(req.body.session);
+		}
+
+		// Validate user input
+		if (
+			validator.isInt(req.body.workload, { min: 1, max: 70 }) &&
+			validator.isInt(req.body.rating, { min: 1, max: 5 }) &&
+			validator.isInt(req.body.difficulty, { min: 1, max: 5 }) &&
+			validator.isInt(req.body.difficulty) &&
+			validator.isLength(req.body.text, { min: 1, max: 8000 }) &&
+			isSessionValid()
+		) {
+			// if all validation passes proceed
+			next();
+		} else {
+			res.status(500).send("<h1>500: Internal server error</h1>");
+		}
+	});
 }
