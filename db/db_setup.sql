@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS courses;
 
 DROP TABLE IF EXISTS users;
 
-DROP TABLE IF EXISTS _sessions; 
+DROP TABLE IF EXISTS semesters; 
 
 CREATE TABLE `courses` (
 	`id` VARCHAR(6),
@@ -30,7 +30,7 @@ CREATE TABLE `reviews` (
 	`timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	`user_id` INT,
 	`course_id` VARCHAR(6) NOT NULL,
-	`session` VARCHAR(30),
+	`semester` VARCHAR(30),
 	`difficulty` TINYINT NOT NULL,
 	`workload` TINYINT,
 	`rating` TINYINT,
@@ -40,7 +40,7 @@ CREATE TABLE `reviews` (
 	FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
-CREATE TABLE `_sessions` (
+CREATE TABLE `semesters` (
 	`id` INT NOT NULL AUTO_INCREMENT,
 	`name_string` VARCHAR(50),
 	`start_date` DATE,

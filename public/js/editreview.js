@@ -1,2 +1,2 @@
-const session = JSON.parse(reviewSession) //get session
-$('#session').selectpicker('val', session); //set as selected
+const semester = JSON.parse(reviewSemester) //get session
+$('#semester').selectpicker('val', semester); //set as selected

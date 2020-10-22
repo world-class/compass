@@ -1,5 +1,5 @@
 INSERT INTO 
-	_sessions(name_string, start_date)
+	semesters(name_string, start_date)
 VALUES
 	('April to September 2019', '2019-04-01'),
 	('October to March 2020', '2019-10-01'),
