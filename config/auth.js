@@ -14,7 +14,12 @@ module.exports = function (passport) {
 	});
 	passport.deserializeUser(function (id, done) {
 		db.query("SELECT * FROM users WHERE id = ? LIMIT 1", [id], function (err, result) {
-			done(err, result[0]);
+			// user does not exist in database
+			if (result.length < 1) {
+				done(err, false);
+			} else {
+				done(err, result[0]);
+			}
 		});
 	});
 
