@@ -250,9 +250,10 @@ module.exports = function (app, passport) {
 		let id = [req.params.id];
 		db.query(sqlquery, id, (err, result) => {
 			if (err) {
-				req.flash("editReviewMessage", "Could not delete review");
+				req.flash("info", "Could not delete review");
 				res.redirect("/review/" + req.params.id + "/update");
 			} else {
+				req.flash("info", "Review deleted.");
 				res.redirect("/profile");
 			}
 		});
@@ -289,6 +290,7 @@ module.exports = function (app, passport) {
 				title: "Compass - profile",
 				reviews: typeof result == "undefined" ? [] : result,
 				user: req.user,
+				infoMessage: req.flash("info"),
 				errorMessage: req.flash("error"),
 				warningMessage: req.flash("warning"),
 			});
