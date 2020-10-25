@@ -49,9 +49,11 @@ module.exports = function (app, passport) {
                 res.render("addreview.html", {
                     title: "Compass – Add Review",
                     heading: "Add Review",
+					form: req.flash("form")[0] || null, //form data from failed add
                     courseList: courseResult,
                     semesterList: semesterResult,
                     addResult: req.query.addResult,
+					infoMessage: req.flash("info"),
                     user: req.user,
                 });
             });
@@ -210,7 +212,7 @@ module.exports = function (app, passport) {
 				reviewResult[0].text = validator.unescape(reviewResult[0].text);
 
 				res.render("editreview.html", {
-					message: req.flash("editReviewMessage"),
+					infoMessage: req.flash("info"),
 					title: "Compass – Edit Review ",
 					heading: "Edit Review #" + id[0],
 					review: reviewResult[0],
@@ -235,10 +237,12 @@ module.exports = function (app, passport) {
 		let entry = [req.body.semester, req.body.difficulty, req.body.workload, req.body.rating, req.body.text, req.params.id];
 		db.query(sqlquery, entry, (err, result) => {
 			if (err) {
-				req.flash("editReviewMessage", "Could not update review");
+				req.flash("info", "Could not update review");
 				res.redirect("/review/" + req.params.id + "/update");
 			} else {
-				req.flash("editReviewMessage", "Review updated.");
+				let link = "/review/" + req.params.id;
+				let message = 'Review updated. <a href="' + link + '">Visit</a>';
+				req.flash("info", message);
 				res.redirect("/review/" + req.params.id + "/update");
 			}
 		});
@@ -346,12 +350,15 @@ function canAddReview(req, res, next) {
 	db.query(sqlquery, entry, (err, result) => {
 		if (err) {
 			console.error("Data not found: " + err.message);
-			res.redicrect("/");
+			res.redirect("/");
 		} else if (result.length < 1) {
 			next();
 		} else {
-			req.flash("editReviewMessage", "You have already reviewed this course. Would you like to edit it?");
-			res.redirect("/review/" + result[0].id + "/update");
+			let link = "/review/" + result[0].id + "/update";
+			let message = 'You have already reviewed this course. Choose another course or <a href="' + link + '">Edit</a>';
+			req.flash("info", message);
+			req.flash("form", req.body);
+			res.redirect("/add");
 		}
 	});
 }

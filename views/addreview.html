@@ -8,6 +8,12 @@
 		<div class="container">
 			<!-- Page content begins below-->
 			<h1><%- heading %></h1>
+
+			<!-- Flash Message -->
+			<% if (infoMessage.length > 0) { %>
+				<div class="alert alert-info"><%- infoMessage %></div>
+			<% } %>
+
 			<!-- Form for capturing reviews -->
 			<% if (addResult == "success") { %>
 			<div class="alert alert-success" role="alert">Your review was successfully added. Thanks!</div>
@@ -21,6 +27,9 @@
 						id="course_id"
 						name="course_id"
 						title="Choose a module..."
+						<% if(form){ %> 
+						value=<%= form.course_id %> 
+						<% } %> 
 						required
 					>
 						<% courseList.forEach(function(course){ %>
@@ -42,33 +51,67 @@
 						<option value="<%= semester.name_string %>"><%= semester.name_string %></option>
 						<% }) %>
 					</select>
+					<!-- save form.semester as a js object so we can use it in external js file -->
+					<% if(form){ %>
+					<script>
+						const reviewSemester = '<%- JSON.stringify(form.semester) %>';
+					</script>
+					<% } %>
 				</div>
 				<div class="form-group">
 					<label for="difficulty">How difficult was this module?</label>
 					<select class="form-control" id="difficulty" name="difficulty" required>
 						<option value="" selected disabled hidden>Choose a value...</option>
-						<option value="1">1 - Trivial</option>
-						<option value="2">2 - Easy</option>
-						<option value="3">3 - Moderate</option>
-						<option value="4">4 - Challenging</option>
-						<option value="5">5 - Hard</option>
+						<% if(form){ %>
+							<option value="1" <% if(form.difficulty == 1){ %> selected <% } %>>1 - Trivial</option>
+							<option value="2" <% if(form.difficulty == 2){ %> selected <% } %>>2 - Easy</option>
+							<option value="3" <% if(form.difficulty == 3){ %> selected <% } %>>3 - Moderate</option>
+							<option value="4" <% if(form.difficulty == 4){ %> selected <% } %>>4 - Challenging</option>
+							<option value="5" <% if(form.difficulty == 5){ %> selected <% } %>>5 - Hard</option>
+						<% } else { %>
+							<option value="" selected disabled hidden>Choose a value...</option>
+							<option value="1">1 - Trivial</option>
+							<option value="2">2 - Easy</option>
+							<option value="3">3 - Moderate</option>
+							<option value="4">4 - Challenging</option>
+							<option value="5">5 - Hard</option>
+						<% } %>
 					</select>
 				</div>
 
 				<div class="form-group">
 					<label for="workload">How many hours per week did you work?</label>
-					<input class="form-control" type="number" id="workload" name="workload" min="0" max="70" required />
+					<input 
+						class="form-control" 
+						type="number" 
+						id="workload" 
+						name="workload" 
+						min="0" 
+						max="70" 
+						<% if(form){ %> 
+						value=<%= form.workload %> 
+						<% } %> 
+						required 
+					/>
 				</div>
 
 				<div class="form-group">
 					<label for="rating">How would you rate the quality of this module?</label>
 					<select class="form-control" id="rating" name="rating" required>
-						<option value="" selected disabled hidden>Choose a value...</option>
-						<option value="1">1 - Very Poor</option>
-						<option value="2">2 - Poor</option>
-						<option value="3">3 - Adequate</option>
-						<option value="4">4 - Good</option>
-						<option value="5">5 - Excellent</option>
+						<% if(form){ %>
+							<option value="1" <% if(form.rating == 1){ %> selected <% } %>>1 - Very Poor</option>
+							<option value="2" <% if(form.rating == 2){ %> selected <% } %>>2 - Poor</option>
+							<option value="3" <% if(form.rating == 3){ %> selected <% } %>>3 - Adequate</option>
+							<option value="4" <% if(form.rating == 4){ %> selected <% } %>>4 - Good</option>
+							<option value="5" <% if(form.rating == 5){ %> selected <% } %>>5 - Excellent</option>
+						<% } else { %>
+							<option value="" selected disabled hidden>Choose a value...</option>
+							<option value="1">1 - Very Poor</option>
+							<option value="2">2 - Poor</option>
+							<option value="3">3 - Adequate</option>
+							<option value="4">4 - Good</option>
+							<option value="5">5 - Excellent</option>
+						<% } %>
 					</select>
 				</div>
 
@@ -80,14 +123,14 @@
 						name="text"
 						rows="4"
 						maxlength="8000"
-						placeholder="Write your reivew here. You can use limited Markdown syntax for formatting."
-						required
-					></textarea>
+						placeholder="Write your review here. You can use limited Markdown syntax for formatting." 
+					><% if(form){ %><%= form.text %><% } %></textarea>
 				</div>
 				<input class="btn btn-primary" type="submit" value="Submit" />
 			</form>
 		</div>
 		<!-- Optional js -->
+		<script type="module" src="/js/editreview.js"></script>
 		<!-- Bootstrap Elements -->
 		<%- include('partials/bootstrap_reqs.ejs')%>
 		<!-- Bootstrap Select Elements -->
