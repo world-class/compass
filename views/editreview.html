@@ -36,20 +36,22 @@
 					</select>
 				</div>
 				<div class="form-group">
-					<label for="session">Session</label>
+					<label for="semester">Session</label>
 					<select
 						class="form-control selectpicker"
 						data-live-search="true"
-						id="session"
-						name="session"
+						id="semester"
+						name="semester"
 						title="Choose a session..."
 						required
 					>
-					<!-- options added by js here -->
+						<% semesterList.forEach(function(semester){ %>
+						<option value="<%= semester.name_string %>"><%= semester.name_string %></option>
+						<% }) %>
 					</select>
-					<!-- save review.session as a js object so we can use it in external js file -->
+					<!-- save review.semester as a js object so we can use it in external js file -->
 					<script>
-						const reviewSession = '<%- JSON.stringify(review.session) %>';
+						const reviewSemester = '<%- JSON.stringify(review.semester) %>';
 					</script>
 				</div>
 				<div class="form-group">

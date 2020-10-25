@@ -34,21 +34,28 @@ module.exports = function (app, passport) {
 
 	// Display a form to add a review. Requires authentication.
 	app.get("/add", checkAuth, function (req, res) {
-		// Get a list of all courses to populate the module selection UI
-		let sql = "SELECT id, title FROM courses";
-		db.query(sql, (err, result) => {
-			if (err) {
-				return console.error("Data not found: " + err.message);
-			}
-			res.render("addreview.html", {
-				title: "Compass – Add Review",
-				heading: "Add Review",
-				courseList: result,
-				addResult: req.query.addResult,
-				user: req.user,
-			});
-		});
-	});
+        let courseSql = "SELECT id, title FROM courses";
+        let semesterSql = "SELECT name_string FROM semesters WHERE start_date <= CURDATE()";
+
+        db.query(courseSql, (courseErr, courseResult) => {
+            if (courseErr) {
+                return console.error("Data not found: " + courseErr.message);
+            }
+            db.query(semesterSql, (semesterErr, semesterResult) => {
+                if (semesterErr) {
+                    return console.error("Data not found: " + semesterErr.message);
+                }
+                res.render("addreview.html", {
+                    title: "Compass – Add Review",
+                    heading: "Add Review",
+                    courseList: courseResult,
+                    semesterList: semesterResult,
+                    addResult: req.query.addResult,
+                    user: req.user,
+                });
+            });
+        });
+    });
 
 	// Add a review to the database and report success or failure. Requires authentication.
 
@@ -56,13 +63,13 @@ module.exports = function (app, passport) {
 		// saving data in database
 		let sqlquery = "INSERT INTO reviews (user_id, \
 											course_id, \
-											session, \
+											semester, \
 											difficulty, \
 											workload, \
 											rating, \
 											text) \
 						VALUES (?,?,?,?,?,?,?)"; // build sql query
-		let newrecord = [req.user.id, req.body.course_id, req.body.session, req.body.difficulty, req.body.workload, req.body.rating, req.body.text];
+		let newrecord = [req.user.id, req.body.course_id, req.body.semester, req.body.difficulty, req.body.workload, req.body.rating, req.body.text];
 		db.query(sqlquery, newrecord, (err, result) => {
 			if (err) {
 				res.send("The review couldn't be added. Try again.");
@@ -81,7 +88,7 @@ module.exports = function (app, passport) {
 						users.username AS author, \
 						reviews.timestamp, \
 						courses.title, \
-						reviews.session, \
+						reviews.semester, \
 						reviews.difficulty, \
 						reviews.workload, \
 						reviews.rating, \
@@ -124,7 +131,7 @@ module.exports = function (app, passport) {
 						users.username AS author, \
 						reviews.timestamp, \
 						courses.title, \
-						reviews.session, \
+						reviews.semester, \
 						reviews.difficulty, \
 						reviews.workload, \
 						reviews.rating, \
@@ -160,11 +167,12 @@ module.exports = function (app, passport) {
 	// get review to update by id and render form
 	app.get("/review/:id/update", checkAuth, canUpdateReview, function (req, res) {
 		// Get review to update by id
-		let sqlquery =
+		let semesterSql = "SELECT name_string FROM semesters WHERE start_date <= CURDATE()";
+		let reviewSql =
 			"SELECT reviews.id, \
 						reviews.course_id, \
 						courses.title, \
-						reviews.session, \
+						reviews.semester, \
 						reviews.difficulty, \
 						reviews.workload, \
 						reviews.rating, \
@@ -177,18 +185,25 @@ module.exports = function (app, passport) {
 						LIKE ?";
 		let id = [req.params.id];
 
-		db.query(sqlquery, id, (err, result) => {
-			if (err) {
-				return console.error("Data not found: " + err.message);
+		db.query(reviewSql, id, (reviewErr, reviewResult) => {
+			if (reviewErr) {
+				return console.error("Data not found: " + reviewErr.message);
 			}
-			// replaced HTML characters for editing again.
-			result[0].text = validator.unescape(result[0].text);
-			res.render("editreview.html", {
-				message: req.flash("editReviewMessage"),
-				title: "Compass – Edit Review ",
-				heading: "Edit Review #" + id[0],
-				review: result[0],
-				user: req.user,
+			db.query(semesterSql, (semesterErr, semesterResult) => {
+                if (semesterErr) {
+                    return console.error("Data not found: " + semesterErr.message);
+                }
+				// replaced HTML characters for editing again.
+				reviewResult[0].text = validator.unescape(reviewResult[0].text);
+
+				res.render("editreview.html", {
+					message: req.flash("editReviewMessage"),
+					title: "Compass – Edit Review ",
+					heading: "Edit Review #" + id[0],
+					review: reviewResult[0],
+					semesterList: semesterResult,
+					user: req.user,
+				});
 			});
 		});
 	});
@@ -198,13 +213,13 @@ module.exports = function (app, passport) {
 		let errors = [];
 		// Update by id
 		let sqlquery = "UPDATE reviews 	\
-						SET session = ?, \
+						SET semester = ?, \
 						difficulty = ?,	\
 						workload = ?, \
 						rating = ?, \
 						text = ? \
 						WHERE id = ?";
-		let entry = [req.body.session, req.body.difficulty, req.body.workload, req.body.rating, req.body.text, req.params.id];
+		let entry = [req.body.semester, req.body.difficulty, req.body.workload, req.body.rating, req.body.text, req.params.id];
 		db.query(sqlquery, entry, (err, result) => {
 			if (err) {
 				req.flash("editReviewMessage", "Could not update review");
@@ -346,19 +361,35 @@ function canUpdateReview(req, res, next) {
 function validateReview(req, res, next) {
 	// Sanitize user input
 	req.body.text = validator.escape(req.body.text);
-	req.body.session = validator.escape(req.body.session);
+	req.body.semester = validator.escape(req.body.semester);
 
-	// Validate user input
-	if (
-		validator.isInt(req.body.workload, { min: 1, max: 70 }) &&
-		validator.isInt(req.body.rating, { min: 1, max: 5 }) &&
-		validator.isInt(req.body.difficulty, { min: 1, max: 5 }) &&
-		validator.isInt(req.body.difficulty) &&
-		validator.isLength(req.body.text, { min: 1, max: 8000 })
-	) {
-		// if all validation passes proceed
-		next();
-	} else {
-		res.status(500).send("<h1>500: Internal server error</h1>");
-	}
+	let semesterSql = "SELECT name_string FROM semesters WHERE start_date <= CURDATE()";
+	db.query(semesterSql, (semesterErr, semesterResult) => {
+		if (semesterErr) {
+			return console.error("Data not found: " + semesterErr.message);
+		}
+
+		function isSemester() {
+			let options = [];
+			semesterResult.forEach(items => {
+				options.push(items.name_string)
+			});
+			return options.includes(req.body.semester);
+		}
+
+		// Validate user input
+		if (
+			validator.isInt(req.body.workload, { min: 1, max: 70 }) &&
+			validator.isInt(req.body.rating, { min: 1, max: 5 }) &&
+			validator.isInt(req.body.difficulty, { min: 1, max: 5 }) &&
+			validator.isInt(req.body.difficulty) &&
+			validator.isLength(req.body.text, { min: 1, max: 8000 }) &&
+			isSemester()
+		) {
+			// if all validation passes proceed
+			next();
+		} else {
+			res.status(500).send("<h1>500: Internal server error</h1>");
+		}
+	});
 }
