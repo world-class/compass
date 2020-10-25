@@ -1,4 +1,5 @@
 const validator = require("validator");
+const markdown = require("markdown-it")();
 
 module.exports = function (app, passport) {
 	// List all courses and their scores
@@ -105,6 +106,12 @@ module.exports = function (app, passport) {
 			if (err) {
 				return console.error("Data not found: " + err.message);
 			}
+
+			// Convert markdown to HTML
+			result.forEach((review) => {
+				review.text = markdown.render(review.text);
+			});
+
 			res.render("reviews.html", {
 				title: "Compass – Review " + id[0],
 				heading: "Review #" + id[0],
@@ -155,6 +162,12 @@ module.exports = function (app, passport) {
 			if (err) {
 				return console.error("Data not found: " + err.message);
 			}
+
+			// Convert markdown to HTML
+			result.forEach((review) => {
+				review.text = markdown.render(review.text);
+			});
+
 			res.render("reviews.html", {
 				title: "Compass – Reviews",
 				heading: "Reviews",
@@ -393,3 +406,4 @@ function validateReview(req, res, next) {
 		}
 	});
 }
+
