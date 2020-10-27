@@ -1,0 +1,29 @@
+/* Default 32px */
+.review-container h1 {
+  font-size: 1.5rem;
+}
+
+/* Default 24px */
+.review-container h2 {
+  font-size: 1.4rem;
+}
+
+/* Default 20.8px */
+.review-container h3 {
+  font-size: 1.3rem;
+}
+
+/* Default 16px */
+.review-container h4 {
+  font-size: 1.2rem;
+}
+
+/* Default 12.8px */
+.review-container h5 {
+  font-size: 1.1rem;
+}
+
+/* Default 11.2px */
+.review-container h6 {
+  font-size: 1rem;
+}
