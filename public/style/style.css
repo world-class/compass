@@ -1,14 +1,29 @@
-/* Default 2em(32px) */
+/* Default 32px */
 h1 {
-  font-size: 1.5em;
+  font-size: 1.5rem;
 }
 
-/* Default 1.5em(24px) */
+/* Default 24px */
 h2 {
-  font-size: 1.3em;
+  font-size: 1.4rem;
 }
 
-/* Default 1.3em(20.8px) */
+/* Default 20.8px */
 h3 {
-  font-size: 1.1em;
+  font-size: 1.3rem;
+}
+
+/* Default 16px */
+h4 {
+  font-size: 1.2rem;
+}
+
+/* Default 12.8px */
+h5 {
+  font-size: 1.1rem;
+}
+
+/* Default 11.2px */
+h6 {
+  font-size: 1rem;
 }
