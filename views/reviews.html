@@ -9,7 +9,7 @@
 			<!-- Page content begins below this -->
 			<h1><%- heading %></h1>
 			<% reviews.forEach(function(review){ %>
-			<div class="card mb-3">
+			<div class="card mb-3 review-container">
 				<div class="card-body">
 					<h5 class="card-title">
 						<a href="/review/<%- review.id %>"> <%- review.course_id %>: <%- review.title %> </a>
