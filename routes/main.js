@@ -216,7 +216,7 @@ module.exports = function (app, passport) {
 				reviewResult[0].text = validator.unescape(reviewResult[0].text);
 
 				res.render("editreview.html", {
-					message: req.flash("editReviewMessage"),
+					infoMessage: req.flash("info"),
 					title: "Compass – Edit Review ",
 					heading: "Edit Review #" + id[0],
 					review: reviewResult[0],
@@ -241,10 +241,12 @@ module.exports = function (app, passport) {
 		let entry = [req.body.semester, req.body.difficulty, req.body.workload, req.body.rating, req.body.text, req.params.id];
 		db.query(sqlquery, entry, (err, result) => {
 			if (err) {
-				req.flash("editReviewMessage", "Could not update review");
+				req.flash("info", "Could not update review");
 				res.redirect("/review/" + req.params.id + "/update");
 			} else {
-				req.flash("editReviewMessage", "Review updated.");
+				let link = "/review/" + req.params.id;
+				let message = 'Review updated. <a href="' + link + '">Visit</a>';
+				req.flash("info", message);
 				res.redirect("/review/" + req.params.id + "/update");
 			}
 		});
@@ -256,9 +258,10 @@ module.exports = function (app, passport) {
 		let id = [req.params.id];
 		db.query(sqlquery, id, (err, result) => {
 			if (err) {
-				req.flash("editReviewMessage", "Could not delete review");
+				req.flash("info", "Could not delete review");
 				res.redirect("/review/" + req.params.id + "/update");
 			} else {
+				req.flash("info", "Review deleted.");
 				res.redirect("/profile");
 			}
 		});
@@ -295,6 +298,7 @@ module.exports = function (app, passport) {
 				title: "Compass - profile",
 				reviews: typeof result == "undefined" ? [] : result,
 				user: req.user,
+				infoMessage: req.flash("info"),
 				errorMessage: req.flash("error"),
 				warningMessage: req.flash("warning"),
 			});

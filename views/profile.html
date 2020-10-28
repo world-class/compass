@@ -7,6 +7,9 @@
 			<h1><%- heading %></h1>
 
 			<!-- alerts -->
+			<% if (infoMessage.length > 0) { %>
+			<div class="alert alert-info"><%= infoMessage %></div>
+			<% } %>
 			<% if (errorMessage.length > 0) { %>
 			<div class="alert alert-danger"><%= errorMessage %></div>
 			<% } %>
