@@ -35,10 +35,16 @@ module.exports = function (app, passport) {
 
 	// Display a form to add a review. Requires authentication.
 	app.get("/add", checkAuth, function (req, res) {
-		let courseSql = "SELECT id, title FROM courses";
+		let courseSql = "SELECT id, title \
+					FROM courses \
+					WHERE id NOT IN \
+						(SELECT DISTINCT course_id \
+						FROM reviews \
+						WHERE user_id = ?)";
 		let semesterSql = "SELECT name_string FROM semesters WHERE start_date <= CURDATE()";
+		let id = [req.user.id];
 
-		db.query(courseSql, (courseErr, courseResult) => {
+		db.query(courseSql, id, (courseErr, courseResult) => {
 			if (courseErr) {
 				return console.error("Data not found: " + courseErr.message);
 			}
@@ -60,7 +66,7 @@ module.exports = function (app, passport) {
 
 	// Add a review to the database and report success or failure. Requires authentication.
 
-	app.post("/add", checkAuth, canAddReview, validateReview, function (req, res) {
+	app.post("/add", checkAuth, validateReview, function (req, res) {
 		// saving data in database
 		let sqlquery = "INSERT INTO reviews (user_id, \
 											course_id, \
@@ -334,24 +340,6 @@ function checkAuth(req, res, next) {
 		req.flash("warning", "You have to sign in before you can access this page");
 		res.redirect("/");
 	}
-}
-
-// middleware for checking if someone can add review
-function canAddReview(req, res, next) {
-	sqlquery = "SELECT id FROM reviews WHERE course_id = ? AND user_id = ?;";
-	entry = [req.body.course_id, req.user.id];
-
-	db.query(sqlquery, entry, (err, result) => {
-		if (err) {
-			console.error("Data not found: " + err.message);
-			res.redicrect("/");
-		} else if (result.length < 1) {
-			next();
-		} else {
-			req.flash("editReviewMessage", "You have already reviewed this course. Would you like to edit it?");
-			res.redirect("/review/" + result[0].id + "/update");
-		}
-	});
 }
 
 // middleware for checking if someone can update review
