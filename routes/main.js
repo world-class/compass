@@ -53,6 +53,7 @@ module.exports = function (app, passport) {
                     semesterList: semesterResult,
                     addResult: req.query.addResult,
                     user: req.user,
+                    selectedModule : req.query.course_id
                 });
             });
         });
