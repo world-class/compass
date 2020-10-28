@@ -35,28 +35,28 @@ module.exports = function (app, passport) {
 
 	// Display a form to add a review. Requires authentication.
 	app.get("/add", checkAuth, function (req, res) {
-        let courseSql = "SELECT id, title FROM courses";
-        let semesterSql = "SELECT name_string FROM semesters WHERE start_date <= CURDATE()";
+		let courseSql = "SELECT id, title FROM courses";
+		let semesterSql = "SELECT name_string FROM semesters WHERE start_date <= CURDATE()";
 
-        db.query(courseSql, (courseErr, courseResult) => {
-            if (courseErr) {
-                return console.error("Data not found: " + courseErr.message);
-            }
-            db.query(semesterSql, (semesterErr, semesterResult) => {
-                if (semesterErr) {
-                    return console.error("Data not found: " + semesterErr.message);
-                }
-                res.render("addreview.html", {
-                    title: "Compass – Add Review",
-                    heading: "Add Review",
-                    courseList: courseResult,
-                    semesterList: semesterResult,
-                    addResult: req.query.addResult,
-                    user: req.user,
-                });
-            });
-        });
-    });
+		db.query(courseSql, (courseErr, courseResult) => {
+			if (courseErr) {
+				return console.error("Data not found: " + courseErr.message);
+			}
+			db.query(semesterSql, (semesterErr, semesterResult) => {
+				if (semesterErr) {
+					return console.error("Data not found: " + semesterErr.message);
+				}
+				res.render("addreview.html", {
+					title: "Compass – Add Review",
+					heading: "Add Review",
+					courseList: courseResult,
+					semesterList: semesterResult,
+					addResult: req.query.addResult,
+					user: req.user,
+				});
+			});
+		});
+	});
 
 	// Add a review to the database and report success or failure. Requires authentication.
 
@@ -203,9 +203,9 @@ module.exports = function (app, passport) {
 				return console.error("Data not found: " + reviewErr.message);
 			}
 			db.query(semesterSql, (semesterErr, semesterResult) => {
-                if (semesterErr) {
-                    return console.error("Data not found: " + semesterErr.message);
-                }
+				if (semesterErr) {
+					return console.error("Data not found: " + semesterErr.message);
+				}
 				// replaced HTML characters for editing again.
 				reviewResult[0].text = validator.unescape(reviewResult[0].text);
 
@@ -384,8 +384,8 @@ function validateReview(req, res, next) {
 
 		function isSemester() {
 			let options = [];
-			semesterResult.forEach(items => {
-				options.push(items.name_string)
+			semesterResult.forEach((items) => {
+				options.push(items.name_string);
 			});
 			return options.includes(req.body.semester);
 		}
@@ -406,4 +406,3 @@ function validateReview(req, res, next) {
 		}
 	});
 }
-
