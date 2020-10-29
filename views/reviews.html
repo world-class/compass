@@ -8,6 +8,9 @@
 		<div class="container">
 			<!-- Page content begins below this -->
 			<h1><%- heading %></h1>
+			<a href="/add<%- typeof filteredModule !== 'undefined' ? '?course_id=' + filteredModule : '' %>"
+				class="btn btn-primary mb-4" >Add a review</a
+			>
 			<% reviews.forEach(function(review){ %>
 			<div class="card mb-3 review-container">
 				<div class="card-body">
@@ -32,4 +35,3 @@
 		<%- include('partials/bootstrap_reqs.ejs')%>
 	</body>
 </html>
-

@@ -35,29 +35,29 @@ module.exports = function (app, passport) {
 
 	// Display a form to add a review. Requires authentication.
 	app.get("/add", checkAuth, function (req, res) {
-        let courseSql = "SELECT id, title FROM courses";
-        let semesterSql = "SELECT name_string FROM semesters WHERE start_date <= CURDATE()";
+		let courseSql = "SELECT id, title FROM courses";
+		let semesterSql = "SELECT name_string FROM semesters WHERE start_date <= CURDATE()";
 
-        db.query(courseSql, (courseErr, courseResult) => {
-            if (courseErr) {
-                return console.error("Data not found: " + courseErr.message);
-            }
-            db.query(semesterSql, (semesterErr, semesterResult) => {
-                if (semesterErr) {
-                    return console.error("Data not found: " + semesterErr.message);
-                }
-                res.render("addreview.html", {
-                    title: "Compass – Add Review",
-                    heading: "Add Review",
-                    courseList: courseResult,
-                    semesterList: semesterResult,
-                    addResult: req.query.addResult,
-                    user: req.user,
-                    selectedModule : req.query.course_id
-                });
-            });
-        });
-    });
+		db.query(courseSql, (courseErr, courseResult) => {
+			if (courseErr) {
+				return console.error("Data not found: " + courseErr.message);
+			}
+			db.query(semesterSql, (semesterErr, semesterResult) => {
+				if (semesterErr) {
+					return console.error("Data not found: " + semesterErr.message);
+				}
+				res.render("addreview.html", {
+					title: "Compass – Add Review",
+					heading: "Add Review",
+					courseList: courseResult,
+					semesterList: semesterResult,
+					addResult: req.query.addResult,
+					user: req.user,
+					selectedModule: req.query.course_id,
+				});
+			});
+		});
+	});
 
 	// Add a review to the database and report success or failure. Requires authentication.
 
@@ -151,8 +151,10 @@ module.exports = function (app, passport) {
 						ON reviews.user_id=users.id";
 
 		// Insert a WHERE clause if a course ID has been provided
+		let heading = "Reviews";
 		if (req.query.course_id !== undefined) {
 			sqlquery += " WHERE reviews.course_id LIKE '%" + req.query.course_id + "%'";
+			heading = heading + " for " + req.query.course_id;
 		}
 
 		// Complete the SQL query
@@ -171,9 +173,10 @@ module.exports = function (app, passport) {
 
 			res.render("reviews.html", {
 				title: "Compass – Reviews",
-				heading: "Reviews",
+				heading: heading,
 				reviews: result,
 				user: req.user,
+				filteredModule: req.query.course_id,
 			});
 		});
 	});
@@ -407,4 +410,3 @@ function validateReview(req, res, next) {
 		}
 	});
 }
-
