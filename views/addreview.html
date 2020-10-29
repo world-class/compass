@@ -23,9 +23,12 @@
 						title="Choose a module..."
 						required
 					>
-						<% courseList.forEach(function(course){ %>
-						<option value="<%= course.id %>"><%= course.id %> - <%= course.title %></option>
-						<% }) %>
+					<% courseList.forEach(function(course){ %>
+						<option value="<%= course.id %>"
+						<%= course.id == selectedModule ? 'selected' : '' %> >
+						<%= course.id %> - <%= course.title %>
+						</option>
+					<% }) %>
 					</select>
 				</div>
 				<div class="form-group">

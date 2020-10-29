@@ -59,6 +59,7 @@ module.exports = function (app, passport) {
 					semesterList: semesterResult,
 					addResult: req.query.addResult,
 					user: req.user,
+					selectedModule: req.query.course_id,
 				});
 			});
 		});
@@ -156,8 +157,10 @@ module.exports = function (app, passport) {
 						ON reviews.user_id=users.id";
 
 		// Insert a WHERE clause if a course ID has been provided
+		let heading = "Reviews";
 		if (req.query.course_id !== undefined) {
 			sqlquery += " WHERE reviews.course_id LIKE '%" + req.query.course_id + "%'";
+			heading = heading + " for " + req.query.course_id;
 		}
 
 		// Complete the SQL query
@@ -176,9 +179,10 @@ module.exports = function (app, passport) {
 
 			res.render("reviews.html", {
 				title: "Compass – Reviews",
-				heading: "Reviews",
+				heading: heading,
 				reviews: result,
 				user: req.user,
+				filteredModule: req.query.course_id,
 			});
 		});
 	});
