@@ -79,8 +79,8 @@ module.exports = function (app, passport) {
 		let newrecord = [req.user.id, req.body.course_id, req.body.semester, req.body.difficulty, req.body.workload, req.body.rating, req.body.text];
 		db.query(sqlquery, newrecord, (err, result) => {
 			if (err) {
-				res.send("The review couldn't be added. Try again.");
-				return console.error(err.message);
+				console.error(err.message);
+				return res.status(500).send("<h1>500: Internal server error</h1>");
 			} else res.redirect("../add/?addResult=success");
 		});
 	});
