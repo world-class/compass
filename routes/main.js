@@ -35,10 +35,16 @@ module.exports = function (app, passport) {
 
 	// Display a form to add a review. Requires authentication.
 	app.get("/add", checkAuth, function (req, res) {
-		let courseSql = "SELECT id, title FROM courses";
+		let courseSql = "SELECT id, title \
+					FROM courses \
+					WHERE id NOT IN \
+						(SELECT DISTINCT course_id \
+						FROM reviews \
+						WHERE user_id = ?)";
 		let semesterSql = "SELECT name_string FROM semesters WHERE start_date <= CURDATE()";
+		let id = [req.user.id];
 
-		db.query(courseSql, (courseErr, courseResult) => {
+		db.query(courseSql, id, (courseErr, courseResult) => {
 			if (courseErr) {
 				return console.error("Data not found: " + courseErr.message);
 			}
@@ -61,7 +67,7 @@ module.exports = function (app, passport) {
 
 	// Add a review to the database and report success or failure. Requires authentication.
 
-	app.post("/add", checkAuth, canAddReview, validateReview, function (req, res) {
+	app.post("/add", checkAuth, validateReview, function (req, res) {
 		// saving data in database
 		let sqlquery = "INSERT INTO reviews (user_id, \
 											course_id, \
@@ -74,8 +80,8 @@ module.exports = function (app, passport) {
 		let newrecord = [req.user.id, req.body.course_id, req.body.semester, req.body.difficulty, req.body.workload, req.body.rating, req.body.text];
 		db.query(sqlquery, newrecord, (err, result) => {
 			if (err) {
-				res.send("The review couldn't be added. Try again.");
-				return console.error(err.message);
+				console.error(err.message);
+				return res.status(500).send("<h1>500: Internal server error</h1>");
 			} else res.redirect("../add/?addResult=success");
 		});
 	});
@@ -207,14 +213,14 @@ module.exports = function (app, passport) {
 				return console.error("Data not found: " + reviewErr.message);
 			}
 			db.query(semesterSql, (semesterErr, semesterResult) => {
-                if (semesterErr) {
-                    return console.error("Data not found: " + semesterErr.message);
-                }
+				if (semesterErr) {
+					return console.error("Data not found: " + semesterErr.message);
+				}
 				// replaced HTML characters for editing again.
 				reviewResult[0].text = validator.unescape(reviewResult[0].text);
 
 				res.render("editreview.html", {
-					message: req.flash("editReviewMessage"),
+					infoMessage: req.flash("info"),
 					title: "Compass – Edit Review ",
 					heading: "Edit Review #" + id[0],
 					review: reviewResult[0],
@@ -239,10 +245,12 @@ module.exports = function (app, passport) {
 		let entry = [req.body.semester, req.body.difficulty, req.body.workload, req.body.rating, req.body.text, req.params.id];
 		db.query(sqlquery, entry, (err, result) => {
 			if (err) {
-				req.flash("editReviewMessage", "Could not update review");
+				req.flash("info", "Could not update review");
 				res.redirect("/review/" + req.params.id + "/update");
 			} else {
-				req.flash("editReviewMessage", "Review updated.");
+				let link = "/review/" + req.params.id;
+				let message = 'Review updated. <a href="' + link + '">Visit</a>';
+				req.flash("info", message);
 				res.redirect("/review/" + req.params.id + "/update");
 			}
 		});
@@ -254,9 +262,10 @@ module.exports = function (app, passport) {
 		let id = [req.params.id];
 		db.query(sqlquery, id, (err, result) => {
 			if (err) {
-				req.flash("editReviewMessage", "Could not delete review");
+				req.flash("info", "Could not delete review");
 				res.redirect("/review/" + req.params.id + "/update");
 			} else {
+				req.flash("info", "Review deleted.");
 				res.redirect("/profile");
 			}
 		});
@@ -293,6 +302,7 @@ module.exports = function (app, passport) {
 				title: "Compass - profile",
 				reviews: typeof result == "undefined" ? [] : result,
 				user: req.user,
+				infoMessage: req.flash("info"),
 				errorMessage: req.flash("error"),
 				warningMessage: req.flash("warning"),
 			});
@@ -340,24 +350,6 @@ function checkAuth(req, res, next) {
 	}
 }
 
-// middleware for checking if someone can add review
-function canAddReview(req, res, next) {
-	sqlquery = "SELECT id FROM reviews WHERE course_id = ? AND user_id = ?;";
-	entry = [req.body.course_id, req.user.id];
-
-	db.query(sqlquery, entry, (err, result) => {
-		if (err) {
-			console.error("Data not found: " + err.message);
-			res.redicrect("/");
-		} else if (result.length < 1) {
-			next();
-		} else {
-			req.flash("editReviewMessage", "You have already reviewed this course. Would you like to edit it?");
-			res.redirect("/review/" + result[0].id + "/update");
-		}
-	});
-}
-
 // middleware for checking if someone can update review
 function canUpdateReview(req, res, next) {
 	sqlquery = "SELECT user_id FROM reviews WHERE id = ? LIMIT 1;";
@@ -388,8 +380,8 @@ function validateReview(req, res, next) {
 
 		function isSemester() {
 			let options = [];
-			semesterResult.forEach(items => {
-				options.push(items.name_string)
+			semesterResult.forEach((items) => {
+				options.push(items.name_string);
 			});
 			return options.includes(req.body.semester);
 		}

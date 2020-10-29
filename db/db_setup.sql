@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS courses;
 
 DROP TABLE IF EXISTS users;
 
-DROP TABLE IF EXISTS semesters; 
+DROP TABLE IF EXISTS semesters;
 
 CREATE TABLE `courses` (
 	`id` VARCHAR(6),
@@ -37,7 +37,8 @@ CREATE TABLE `reviews` (
 	`text` TEXT,
 	PRIMARY KEY (`id`),
 	FOREIGN KEY (course_id) REFERENCES courses(id),
-	FOREIGN KEY (user_id) REFERENCES users(id)
+	FOREIGN KEY (user_id) REFERENCES users(id),
+	UNIQUE (course_id, user_id)
 );
 
 CREATE TABLE `semesters` (

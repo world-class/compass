@@ -9,8 +9,10 @@
 			<!-- Page content begins below this -->
 			<h1><%- heading %></h1>
 			<a href="/add<%- typeof filteredModule !== 'undefined' ? '?course_id=' + filteredModule : '' %>"
-				class="btn btn-primary mb-4" >Add a review</a
-			>
+				class="btn btn-primary mb-4" >Add a review</a>
+			<% if (typeof reviews === 'undefined' || reviews.length < 1) { %>
+			<p>No reviews found for selected course or id.</p>
+			<% } %>
 			<% reviews.forEach(function(review){ %>
 			<div class="card mb-3 review-container">
 				<div class="card-body">
