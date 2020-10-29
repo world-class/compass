@@ -8,7 +8,9 @@
 		<div class="container">
 			<!-- Page content begins below this -->
 			<h1><%- heading %></h1>
-			<% reviews.forEach(function(review){ %>
+			<% if (typeof reviews === 'undefined' || reviews.length < 1) { %>
+			<p>No reviews found for selected course or id.</p>
+			<% } %> <% reviews.forEach(function(review){ %>
 			<div class="card mb-3 review-container">
 				<div class="card-body">
 					<h5 class="card-title">
@@ -32,4 +34,3 @@
 		<%- include('partials/bootstrap_reqs.ejs')%>
 	</body>
 </html>
-
