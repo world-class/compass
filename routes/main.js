@@ -1,43 +1,19 @@
 module.exports = function (app, passport) {
 	const userRoutes = require("./user")(app, passport);
 	const reviewRoutes = require("./reviews");
+	const courseRoutes = require("./courses");
 
-	// routes related to user profile and authentication
+	// add routes related to user with prefix `/user`
 	app.use("/user", userRoutes);
 
-	// routes related to reviews
+	// add routes related to reviews with prefix `/reviews`
 	app.use("/reviews", reviewRoutes);
 
-	// List all courses and their scores
-	app.get("/", function (req, res) {
-		// Get a list of all courses and calculate the average scores to show
-		let sqlquery =
-			"SELECT courses.id, courses.title, \
-						COUNT(courses.id) AS reviewCount, \
-						ROUND(AVG(reviews.difficulty), 2) AS difficulty, \
-						ROUND(AVG(reviews.workload), 2) AS workload, \
-						ROUND(AVG(reviews.rating), 2) AS rating \
-						FROM courses \
-						JOIN reviews \
-						ON courses.id=reviews.course_id \
-						GROUP BY courses.id \
-						ORDER BY courses.id ASC";
+	// add routes related to courses with prefix `/courses`
+	app.use("/courses", courseRoutes);
 
-		// Run the query and return the result
-		db.query(sqlquery, (err, result) => {
-			if (err) {
-				return console.error("Data not found: " + err.message);
-			}
-			res.render("index.html", {
-				title: "Compass – Courses",
-				heading: "Courses",
-				courseReviewData: result,
-				user: req.user,
-				errorMessage: req.flash("error"),
-				warningMessage: req.flash("warning"),
-			});
-		});
-	});
+	// Redirect homepage to courses summary for now
+	app.use("/", (req, res) => res.redirect("/courses"));
 
 	// handle pages not found. This should be the second last route.
 	app.use(function (req, res) {
