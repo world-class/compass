@@ -1,6 +1,7 @@
 module.exports = function (app, passport) {
 	const express = require("express");
 	const router = express.Router();
+	const checkAuth = require("../middlewares/checkAuth");
 
 	// logout user
 	router.get("/logout", function (req, res) {
@@ -57,14 +58,5 @@ module.exports = function (app, passport) {
 		}
 	);
 
-	// middleware for blocking access to desired routes
-	function checkAuth(req, res, next) {
-		if (req.isAuthenticated()) {
-			next();
-		} else {
-			req.flash("warning", "You have to sign in before you can access this page");
-			res.redirect("/");
-		}
-	}
 	return router;
 };
