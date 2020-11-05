@@ -4,6 +4,10 @@ const router = express.Router();
 const validator = require("validator");
 const markdown = require("markdown-it")();
 const checkAuth = require("../middlewares/checkAuth");
+const paginate = require("express-paginate");
+
+// Use pagination for review routes. Minimum 10 items per page.
+router.use(paginate.middleware(10, 30));
 
 // List all reviews, optionally filtered by course_id
 router.get("/", function (req, res) {
@@ -40,11 +44,11 @@ router.get("/", function (req, res) {
 		heading = heading + " for " + req.query.course_id;
 	}
 
-	// Complete the SQL query
-	sqlquery += " ORDER BY reviews.timestamp DESC";
+	// Complete the SQL query. Sort by recency and paginate.
+	sqlquery += " ORDER BY reviews.timestamp DESC LIMIT ? OFFSET ?";
 
 	// Run the final query and return reviews for display
-	db.query(sqlquery, (err, result) => {
+	db.query(sqlquery, [req.query.limit, req.skip], (err, result) => {
 		if (err) {
 			return console.error("Data not found: " + err.message);
 		}
