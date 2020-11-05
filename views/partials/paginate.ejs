@@ -1,0 +1,20 @@
+<!-- pagination -->
+<nav arial-label="Page navigation" class="text-xs-center">
+	<ul class="pagination justify-content-center">
+		<% if (paginate.hasPreviousPages) { %>
+		<li class="page-item previous">
+			<a class="page-link" href="<%= paginate.href(true) %>">Prev</a>
+		</li>
+		<% } %>
+		<% pages.forEach(function(page) { %>
+		<li class="page-item <%= paginate.page == page.number ? 'active' : '' %>">
+			<a class="page-link" href="<%= page.url %>"><%= page.number %></a>
+		</li>
+		<% }) %>
+		<% if (paginate.hasNextPages(pageCount)) { %>
+		<li class="page-item next">
+			<a class="page-link" href="<%= paginate.href() %>">Next</a>
+		</li>
+		<% } %>
+	</ul>
+</nav>

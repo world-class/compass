@@ -14,44 +14,10 @@
 			<p>No reviews found for selected course or id.</p>
 			<% } %>
 			<% reviews.forEach(function(review){ %>
-			<div class="card mb-3 review-container">
-				<div class="card-body">
-					<h5 class="card-title">
-						<a href="/reviews/<%- review.id %>"> <%- review.course_id %>: <%- review.title %> </a>
-					</h5>
-					<h6 class="card-subtitle mb-2 text-muted"><%- review.timestamp %></h6>
-					<h6 class="card-subtitle mb-2 text-muted"><%- review.author %></h6>
-					<h6 class="card-subtitle mb-2 text-muted"><%- review.semester %></h6>
-					<p class="card-text" style="white-space: pre-wrap"><%- review.text %></p>
-					<h6 class="card-subtitle mb-2">Difficulty: <%- review.difficulty %> / 5</h6>
-					<h6 class="card-subtitle mb-2">Workload: <%- review.workload %> hours / week</h6>
-					<h6 class="card-subtitle mb-2">Rating: <%- review.rating %> / 5</h6>
-					<% if (typeof user !== 'undefined' && user.id == review.user_id) { %>
-					<a class="btn btn-outline-secondary btn-sm" href="/reviews/<%- review.id %>/update">Edit</a>
-					<% } %>
-				</div>
-			</div>
-			<% }) %>
+				<%- include('partials/review_card.ejs', {review: review}) %>
+			<% }); %>
 			<!-- pagination -->
-			<nav arial-label="Page navigation" class="text-xs-center">
-				<ul class="pagination justify-content-center">
-					<% if (paginate.hasPreviousPages) { %>
-					<li class="page-item previous">
-						<a class="page-link" href="<%= paginate.href(true) %>">Prev</a>
-					</li>
-					<% } %>
-					<% pages.forEach(function(page) { %>
-					<li class="page-item <%= paginate.page == page.number ? 'active' : '' %>">
-						<a class="page-link" href="<%= page.url %>"><%= page.number %></a>
-					</li>
-					<% }) %>
-					<% if (paginate.hasNextPages(pageCount)) { %>
-					<li class="page-item next">
-						<a class="page-link" href="<%= paginate.href() %>">Next</a>
-					</li>
-					<% } %>
-				</ul>
-			</nav>
+			<%- include('partials/paginate.ejs') %>
 		</div>
 		<!-- Bootstrap requirements -->
 		<%- include('partials/bootstrap_reqs.ejs')%>

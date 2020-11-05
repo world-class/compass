@@ -171,10 +171,10 @@ router.get("/:id", function (req, res) {
 			review.text = markdown.render(review.text);
 		});
 
-		res.render("reviews.html", {
+		res.render("review.html", {
 			title: "Compass – Review " + id[0],
 			heading: "Review #" + id[0],
-			reviews: result,
+			review: result[0],
 			user: req.user,
 		});
 	});
