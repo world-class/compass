@@ -22,6 +22,7 @@ const db = mysql.createConnection({
 	user: process.env.DB_USER,
 	password: process.env.DB_PASSWORD,
 	database: process.env.DB_DATABASE,
+	charset: "utf8mb4",
 	typeCast: function castField(field, useDefaultTypeCasting) {
 		// Cast bit fields that have a single-bit in them to a boolean
 		// Without this, 'bit' fields will not return as true/false
