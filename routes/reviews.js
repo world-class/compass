@@ -4,6 +4,10 @@ const router = express.Router();
 const validator = require("validator");
 const markdown = require("markdown-it")();
 const checkAuth = require("../middlewares/checkAuth");
+const paginate = require("express-paginate");
+
+// Use pagination for review routes. Minimum 10 items per page.
+router.use(paginate.middleware(10, 30));
 
 // List all reviews, optionally filtered by course_id
 router.get("/", function (req, res) {
@@ -14,7 +18,21 @@ router.get("/", function (req, res) {
 	 * The "LIKE" comparison allows for fuzzy matching, e.g. CM10 returns all L4 modules
 	 */
 
-	// Get all reviews. JOIN to courses table is required to get the course titles
+	// Get count of all reviews
+	let countQuery = "SELECT COUNT(*) AS reviewCount FROM reviews";
+	if (req.query.course_id !== undefined) {
+		countQuery += " WHERE reviews.course_id LIKE '%" + req.query.course_id + "%'";
+	}
+
+	let itemCount;
+	db.query(countQuery, (err, result) => {
+		if (err) {
+			return console.error("Can not retrieve count of reviews. " + err.message);
+		}
+		itemCount = result[0].reviewCount;
+	});
+
+	// Get reviews. JOIN to courses table is required to get the course titles
 	let sqlquery =
 		"SELECT reviews.id, \
 						reviews.course_id, \
@@ -40,11 +58,11 @@ router.get("/", function (req, res) {
 		heading = heading + " for " + req.query.course_id;
 	}
 
-	// Complete the SQL query
-	sqlquery += " ORDER BY reviews.timestamp DESC";
+	// Complete the SQL query. Sort by recency and paginate.
+	sqlquery += " ORDER BY reviews.timestamp DESC LIMIT ? OFFSET ?";
 
 	// Run the final query and return reviews for display
-	db.query(sqlquery, (err, result) => {
+	db.query(sqlquery, [req.query.limit, req.skip], (err, result) => {
 		if (err) {
 			return console.error("Data not found: " + err.message);
 		}
@@ -54,12 +72,16 @@ router.get("/", function (req, res) {
 			review.text = markdown.render(review.text);
 		});
 
+		const pageCount = Math.ceil(itemCount / req.query.limit);
 		res.render("reviews.html", {
 			title: "Compass – Reviews",
 			heading: heading,
 			reviews: result,
 			user: req.user,
 			filteredModule: req.query.course_id,
+			pageCount,
+			itemCount,
+			pages: paginate.getArrayPages(req)(5, pageCount, req.query.page),
 		});
 	});
 });
@@ -149,10 +171,10 @@ router.get("/:id", function (req, res) {
 			review.text = markdown.render(review.text);
 		});
 
-		res.render("reviews.html", {
+		res.render("review.html", {
 			title: "Compass – Review " + id[0],
 			heading: "Review #" + id[0],
-			reviews: result,
+			review: result[0],
 			user: req.user,
 		});
 	});

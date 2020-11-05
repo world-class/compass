@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+	<!-- EJS head partial -->
+	<%- include('partials/head.ejs'), {title: title}%>
+	<body>
+		<!-- EJS snippet to include the navbar from a partial -->
+		<%- include('partials/nav.ejs') %>
+		<div class="container">
+			<!-- Page content begins below this -->
+			<h1><%- heading %></h1>
+			<%- include('partials/review_card.ejs', {review: review}) %>
+		</div>
+		<!-- Bootstrap requirements -->
+		<%- include('partials/bootstrap_reqs.ejs')%>
+	</body>
+</html>

@@ -1,0 +1,17 @@
+<div class="card mb-3 review-container">
+	<div class="card-body">
+		<h5 class="card-title">
+			<a href="/reviews/<%- review.id %>"> <%- review.course_id %>: <%- review.title %> </a>
+		</h5>
+		<h6 class="card-subtitle mb-2 text-muted"><%- review.timestamp %></h6>
+		<h6 class="card-subtitle mb-2 text-muted"><%- review.author %></h6>
+		<h6 class="card-subtitle mb-2 text-muted"><%- review.semester %></h6>
+		<p class="card-text" style="white-space: pre-wrap"><%- review.text %></p>
+		<h6 class="card-subtitle mb-2">Difficulty: <%- review.difficulty %> / 5</h6>
+		<h6 class="card-subtitle mb-2">Workload: <%- review.workload %> hours / week</h6>
+		<h6 class="card-subtitle mb-2">Rating: <%- review.rating %> / 5</h6>
+		<% if (typeof user !== 'undefined' && user.id == review.user_id) { %>
+		<a class="btn btn-outline-secondary btn-sm" href="/reviews/<%- review.id %>/update">Edit</a>
+		<% } %>
+	</div>
+</div>
