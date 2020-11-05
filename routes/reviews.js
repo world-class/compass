@@ -18,7 +18,20 @@ router.get("/", function (req, res) {
 	 * The "LIKE" comparison allows for fuzzy matching, e.g. CM10 returns all L4 modules
 	 */
 
-	// Get all reviews. JOIN to courses table is required to get the course titles
+	// Get count of all reviews
+	let countQuery = "SELECT COUNT(*) AS reviewCount FROM reviews";
+	if (req.query.course_id !== undefined) {
+		sqlquery += " WHERE reviews.course_id LIKE '%" + req.query.course_id + "%'";
+	}
+	let itemCount;
+	db.query(countQuery, (err, result) => {
+		if (err) {
+			return console.error("Can not retrieve count of reviews. " + err.message);
+		}
+		itemCount = result[0].reviewCount;
+	});
+
+	// Get reviews. JOIN to courses table is required to get the course titles
 	let sqlquery =
 		"SELECT reviews.id, \
 						reviews.course_id, \
@@ -58,12 +71,16 @@ router.get("/", function (req, res) {
 			review.text = markdown.render(review.text);
 		});
 
+		const pageCount = Math.ceil(itemCount / req.query.limit);
 		res.render("reviews.html", {
 			title: "Compass – Reviews",
 			heading: heading,
 			reviews: result,
 			user: req.user,
 			filteredModule: req.query.course_id,
+			pageCount,
+			itemCount,
+			pages: paginate.getArrayPages(req)(5, pageCount, req.query.page),
 		});
 	});
 });
