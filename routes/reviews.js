@@ -21,8 +21,9 @@ router.get("/", function (req, res) {
 	// Get count of all reviews
 	let countQuery = "SELECT COUNT(*) AS reviewCount FROM reviews";
 	if (req.query.course_id !== undefined) {
-		sqlquery += " WHERE reviews.course_id LIKE '%" + req.query.course_id + "%'";
+		countQuery += " WHERE reviews.course_id LIKE '%" + req.query.course_id + "%'";
 	}
+
 	let itemCount;
 	db.query(countQuery, (err, result) => {
 		if (err) {
