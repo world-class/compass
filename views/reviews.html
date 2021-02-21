@@ -8,7 +8,7 @@
 		<div class="container">
 			<!-- Page content begins below this -->
 			<h1><%= heading %></h1>
-			<a href="/reviews/add<%- typeof filteredModule !== 'undefined' ? '?course_id=' + filteredModule : '' %>"
+			<a href="/reviews/add<%= typeof filteredModule !== 'undefined' ? '?course_id=' + filteredModule : '' %>"
 				class="btn btn-primary mb-4" >Add a review</a>
 			<% if (typeof reviews === 'undefined' || reviews.length < 1) { %>
 			<p>No reviews found for selected course or id.</p>
