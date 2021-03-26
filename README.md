@@ -1,5 +1,5 @@
 # Compass
- Compass is a suite of tools being developed for students enrolled in the University of London BSc in Computer Science online degree. It is hosted at [worldclass-compass.com](https://worldclass-compass.com).
+ Compass is a suite of tools being developed for students enrolled in the University of London BSc in Computer Science online degree. A demo version is hosted at [compass-reviews.herokuapp.com](https://compass-reviews.herokuapp.com/courses).
 
  ## Current Features
 
