@@ -1,0 +1,65 @@
+courseData = [
+	{ id: "CM1005", title: "Introduction to Programming I", level: 4 },
+	{ id: "CM1010", title: "Introduction to Programming II", level: 4 },
+	{ id: "CM1015", title: "Numerical Mathematics", level: 4 },
+	{ id: "CM1020", title: "Discrete Mathematics", level: 4 },
+	{
+		id: "CM1025",
+		title: "Fundamentals of Computer Science",
+		level: 4,
+	},
+	{ id: "CM1030", title: "How Computers Work", level: 4 },
+	{
+		id: "CM1035",
+		title: "Algorithms and Data Structures I",
+		level: 4,
+	},
+	{ id: "CM1040", title: "Web Development", level: 4 },
+	{ id: "CM2005", title: "Object Oriented Programming", level: 5 },
+	{
+		id: "CM2010",
+		title: "Software Design and Development",
+		level: 5,
+	},
+	{ id: "CM2015", title: "Programming with Data", level: 5 },
+	{ id: "CM2020", title: "Agile Software Projects", level: 5 },
+	{ id: "CM2025", title: "Computer Security", level: 5 },
+	{ id: "CM2030", title: "Graphics Programming", level: 5 },
+	{
+		id: "CM2035",
+		title: "Algorithms and Data Structures II",
+		level: 5,
+	},
+	{
+		id: "CM2040",
+		title: "Databases, Networks and the Web",
+		level: 5,
+	},
+	{ id: "CM3005", title: "Data Science", level: 6 },
+	{
+		id: "CM3010",
+		title: "Databases and Advanced Data Techniques",
+		level: 6,
+	},
+	{
+		id: "CM3015",
+		title: "Machine Learning and Neural Networks",
+		level: 6,
+	},
+	{ id: "CM3020", title: "Artificial Intelligence", level: 6 },
+	{ id: "CM3025", title: "Virtual Reality", level: 6 },
+	{ id: "CM3030", title: "Games Development", level: 6 },
+	{ id: "CM3035", title: "Advanced Web Development", level: 6 },
+	{
+		id: "CM3040",
+		title: "Physical Computing and Internet of Things",
+		level: 6,
+	},
+	{ id: "CM3045", title: "3D Graphics and Animation", level: 6 },
+	{ id: "CM3050", title: "Mobile Development", level: 6 },
+	{ id: "CM3055", title: "Interaction Design", level: 6 },
+	{ id: "CM3060", title: "Natural Language Processing", level: 6 },
+	{ id: "CM3070", title: "Final Project", level: 6 },
+];
+
+module.exports = courseData;

@@ -41,7 +41,7 @@ If you want to contribute to development of Compass, we encourage you to explore
 
 2.  Run the `db_setup` script in the `db` folder to build the database.
 3.  Create `.env` file and insert your secrets into it. Use `.env.example` file as reference for what is required.
-4.  Run `nodemon` and open the app at `localhost:<port>` specifying the port defined in `index.js`.
+4.  Run `nodemon` and open the app at `localhost:<port>` specifying the port defined in `app.js`.
 
         $ npm install -g nodemon
         $ nodemon

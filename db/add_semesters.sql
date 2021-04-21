@@ -1,4 +1,6 @@
-INSERT INTO 
+USE compass_db;
+
+INSERT INTO
 	semesters(name_string, start_date)
 VALUES
 	('April to September 2019', '2019-04-01'),
