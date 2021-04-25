@@ -9,7 +9,6 @@ class Courses extends Router {
 	setRoutes(db) {
 		this.router.get("/", (req, res) => {
 			db.Course.findAll().then((result) => {
-				console.log(req.user);
 				res.render("index.html", {
 					title: "Compass – Courses",
 					heading: "Courses",

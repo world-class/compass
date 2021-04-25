@@ -9,7 +9,7 @@ const User = require("./User");
 const Course = require("./Course");
 
 // Load initial data
-const courses = require("./CourseInitialData");
+const courses = require("./Course.json").courses;
 
 class DB {
 	constructor(app) {
@@ -35,7 +35,6 @@ class DB {
 		return new Promise((resolve) => {
 			this.User = new User(sequelize);
 			this.Course = new Course(sequelize);
-			console.log(this.Course);
 			resolve();
 		});
 	}

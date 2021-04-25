@@ -23,7 +23,7 @@ class Router {
 	 * This can invoke sub-features by importing the specific classes and instantiating them,
 	 * or it can declare Express routes of it's own, e.g. using 'this.router.get()'
 	 */
-	setRoutes() {
+	setRoutes(db) {
 		throw "Abstract method updateChartsData not implemented";
 	}
 }
