@@ -78,6 +78,8 @@ class DB {
 				resave: false,
 				saveUninitialized: true,
 				proxy: true,
+				HttpOnly: true,
+				name: "compass-session",
 			})
 		);
 
