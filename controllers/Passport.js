@@ -14,13 +14,10 @@ class Passport {
 
 		// use `id` for serializing and deserializing users in database
 		passport.serializeUser(function (user, done) {
-			console.log("Serializing " + user.id);
 			done(null, user.id);
 		});
 
 		passport.deserializeUser(function (id, done) {
-			console.log("Deserializing " + id);
-
 			let result = db.User.findByPk(id)
 				.then(done(null, true))
 				.catch((err) => {
