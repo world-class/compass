@@ -1,6 +1,5 @@
 const fs = require("fs");
 const http = require("http");
-const https = require("https");
 
 class HttpServer {
 	constructor(app) {
