@@ -20,11 +20,11 @@
 		</div>
 		<div class="navbar-nav flex-row justify-content-between ml-auto">
 			<% if (typeof user !== 'undefined' && user) { %>
-			<a href="#" class="nav-link disabled">Hi, <%= user.username %></a>
-			<a href="/user/profile" class="nav-link">Profile</a>
-			<a href="/user/logout" class="nav-link">Logout</a>
+			<a href="#" class="nav-link disabled">Hi, <%= user.name %></a>
+			<a href="/profile" class="nav-link">Profile</a>
+			<a href="/profile/logout" class="nav-link">Logout</a>
 			<% } else { %>
-			<a href="/user/auth/slack"
+			<a href="/profile/auth/slack"
 				><img
 					class=""
 					alt="verify in with Slack"

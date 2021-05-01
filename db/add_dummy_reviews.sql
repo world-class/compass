@@ -1,3 +1,5 @@
+USE compass_db;
+
 INSERT INTO
 	reviews(user_id, course_id, semester, difficulty, workload, rating, text)
 VALUES

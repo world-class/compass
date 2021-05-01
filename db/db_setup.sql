@@ -20,17 +20,17 @@ CREATE TABLE `courses` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE `users` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `username` VARCHAR(80) NOT NULL,
-    `email` VARCHAR(80),
-    `slackuid` VARCHAR(25) NOT NULL UNIQUE,
-    PRIMARY KEY (`id`)
+	`id` VARCHAR(9),
+	`name` VARCHAR(50),
+	`email` VARCHAR(100),
+	`avatar_url` VARCHAR(250),
+	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE `reviews` (
 	`id` INT NOT NULL AUTO_INCREMENT,
 	`timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	`user_id` INT,
+	`user_id` VARCHAR(9),
 	`course_id` VARCHAR(6) NOT NULL,
 	`semester` VARCHAR(30),
 	`difficulty` TINYINT NOT NULL,
