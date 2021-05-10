@@ -9,7 +9,7 @@
     "dotenv": "^8.2.0",
     "ejs": "^3.1.6",
     "express": "^4.17.1",
-    "express-mysql-session": "^2.1.5",
+    "express-mysql-session": "^2.1.6",
     "express-paginate": "^1.0.2",
     "express-session": "^1.17.1",
     "markdown-it": "^12.0.4",
