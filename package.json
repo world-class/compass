@@ -12,7 +12,7 @@
     "express-mysql-session": "^2.1.5",
     "express-paginate": "^1.0.2",
     "express-session": "^1.17.1",
-    "markdown-it": "^12.0.4",
+    "markdown-it": "^12.1.0",
     "method-override": "^3.0.0",
     "mysql": "^2.18.1",
     "passport": "^0.4.1",
