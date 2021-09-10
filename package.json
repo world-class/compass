@@ -20,7 +20,7 @@
     "validator": "^13.5.2"
   },
   "devDependencies": {
-    "prettier": "^2.2.1"
+    "prettier": "^2.4.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
