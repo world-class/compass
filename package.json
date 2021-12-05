@@ -17,7 +17,7 @@
     "mysql": "^2.18.1",
     "passport": "^0.5.0",
     "passport-slack": "0.0.7",
-    "validator": "^13.5.2"
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "prettier": "^2.2.1"
