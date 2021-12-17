@@ -15,7 +15,7 @@
     "markdown-it": "^12.2.0",
     "method-override": "^3.0.0",
     "mysql": "^2.18.1",
-    "passport": "^0.5.0",
+    "passport": "^0.5.2",
     "passport-slack": "0.0.7",
     "validator": "^13.7.0"
   },
